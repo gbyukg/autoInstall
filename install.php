@@ -4,13 +4,6 @@
 #error_reporting(0);
 $filename = $argv[1];
 $dbname = $argv[2];
-// echo "初始化数据库\n";
-// $1: 输入要下载的分支号(如：ibm_published_builds_r053)
-// $2: 
-//$3:dbname
-// $output = shell_exec('./init.sh ' . $dbname);
-// echo $output;
-// echo "完成\n";
 $params ['post_fields'] = array (
 		'第一步' => array (
 				'language' => 'en_us',
@@ -103,9 +96,6 @@ $params ['post_fields'] = array (
 );
 
 $url = 'http://www.sugar.com/' . $filename . '/install.php';
-echo $url . "\n";
-echo $dbname . "\n";
-// return;
 $ch  = curl_init($url);
 //创建一个用于存放cookie信息的临时文件
 $cookie = tempnam('.','~');
@@ -132,4 +122,4 @@ foreach ($params['post_fields'] as $key1=>$val)
 	//echo $response;
 }
 curl_close($ch);
-echo "安装完毕\n访问地址：http://www.sugar.com/$filename/install.php\n";
+echo "安装完毕\n访问地址：http://www.sugar.com/$filename/index.php\n";

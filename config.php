@@ -27,3 +27,7 @@ $config = array(
 	),
 
 );
+
+var_dump($_POST);
+
+
