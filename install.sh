@@ -1,11 +1,12 @@
 #!/bin/bash
-install_method=${1}
-db_name=${2}
-db_host=${3}
-db_port=${4}
-db_user=${5}
-db_pwd=${6}
-web_root="/document/gbyukg/www/sugar"
+install_method=${1} #git/url
+db_name=${2}	#sugarcrm
+db_host=${3}	#localhost
+db_port=${4}	#50000
+db_user=${5}	#db2inst1
+db_pwd=${6}		#admin
+web_root="/document/gbyukg/www/sugar/"
+current_dir=$(pwd)
 
 #从github上获取代码并重构
 function get_git()
@@ -20,6 +21,7 @@ function get_git()
 		git checkout ibm_current
 		git branch -D install_${master_b}
 	fi
+	echo "fetch分支${master_b}..."
 	git fetch upstream ${master_b}
 	if [ $? -ne 0 ]; then
 		echo 'fetch出错'
@@ -27,8 +29,9 @@ function get_git()
 	fi
 	git checkout -b install_${master_b} upstream/${master_b}
 	#合并子分支
-	if [ "X${merage_b}" -ne "X" ]; then
+	if [ "X${merage_b}" == "X" ]; then
 		#git merge upstream/${merge_b}
+		echo "合并分支${merge_b}..."
 		git pull origin ${merge_b}
 		if [ $? -ne 0 ]; then
 			echo "merge分支upstream/${merge_b}出错"
@@ -67,19 +70,65 @@ function get_url()
 #init db
 function init_db()
 {
-	echo "初始化数据库..."
-	./initdb.exp ${dbname}
+	echo "初始化数据库${db_name}..."
+	cd ${current_dir}
+	./initdb.exp ${db_name}
+}
+
+#更新dataloader配置文件
+function update_config()
+{
+	echo "更新dataloader配置文件：${1}/ibm/config.php"
+	cat <<HERE > config.php
+<?php
+
+\$config = array(
+
+	// DB settings 
+	'db' => array(
+		'type' => 'db2', // mysql or db2
+		'host' => '${db_host}',
+		'port' => '${db_port}',
+		'username' => '${db_user}',
+		'password' => '${db_pwd}',
+		'name' => '$db_name',
+	),
+	
+	// default bean field/values used by Utils_Db::createInsert()
+	'bean_fields' => array(
+		'created_by' => '1',
+		'date_entered' => '2012-01-01 00:00:00',
+		'modified_user_id' => '1',
+		'date_modified' => '2012-01-01 00:00:00',
+	),
+
+	// sugarcrm
+	'sugarcrm' => array(
+		// full path of the installed sugarcrm instance
+		'directory' => '/srv/www/htdocs/build/dev/ult/sugarcrm',
+	),
+
+);
+HERE
 }
 
 #data_loader
 function data_loader()
 {
-	echo 'dataloader...'
-	
+	if [ "${install_method}" == "git" ]; then
+		cp -r ${git_store}ibm ${web_root}${sugar_name}
+		cd ${web_root}${sugar_name}/ibm/dataloaders/
+		update_config ${web_root}${sugar_name}ibm/dataloaders
+	else
+		echo 'url'
+	fi
+	echo '读取dataloader...'
+	php populate_SmallDataset.php
 }
 
 
 if [ "${install_method}" == "git" ]; then
+	echo 'install from git...'
 	master_b=${7}
 	merge_b=${8}
 	get_git
@@ -88,21 +137,21 @@ elif [ "${install_method}" == "url" ]; then
 	sugar_build=${8}
 fi
 
-#init_db
+#初始化数据库
+init_db
 
 #开始安装
-#php install.php ${sugar_name} ${dbname}
+cd ${current_dir}
+echo '安装sugarcrm...'
+php install.php ${sugar_name} ${db_name}
 
-#echo ${install_method}
-#echo ${db_name}
-#echo ${db_host}
-#echo ${db_port}
-#echo ${db_user}
-#echo ${db_pwd}
-#echo ${master_b}
-#echo ${merge_b}
-echo $@
+#dataloader
+data_loader
+
+rm ~*
 echo "success!!!"
+#打开浏览器
+chromium-browser http://www.sugar.com/${sugar_name}
 
 
 

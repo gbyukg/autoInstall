@@ -117,7 +117,8 @@ foreach ($params['post_fields'] as $key1=>$val)
 		$fields_string .= $key . '=' . $value . '&';
 	}
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
-	echo '<h1>' . $key1 .'</h1><br\>';
+// 	echo '<h1>' . $key1 .'</h1><br\>';
+	echo '\n' . $key1 .'...';
 	$response= curl_exec($ch);
 	//echo $response;
 }

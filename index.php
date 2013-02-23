@@ -1,19 +1,5 @@
 <?php
 header("Content-type: text/html; charset=utf-8");
-$url = 'http://sugjnk01.rtp.raleigh.ibm.com/';
-$ch = curl_init($url);
-curl_setopt ( $ch, CURLOPT_HEADER, false );
-curl_setopt ( $ch, CURLOPT_NOBODY, false );
-curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-curl_setopt ( $ch, CURLOPT_COOKIESESSION, true );
-$response= curl_exec($ch);
-curl_close($ch);
-
-// eregi
-// preg_match_all('/(?<=href=")[\w\d\.:\/]*/',$response,$m);
-preg_match_all('/(?>)[\w\d\.:\/]*<\/a>/',$response,$m);
-var_dump($response);
-var_dump ( $_POST );
 
 function exec_shell()
 {
@@ -82,6 +68,45 @@ function input_check(obj)
 		
 	}
 }
+
+function load_ajax(filename)
+{
+	var xmlhttp = null;
+	try {
+        xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    
+    xmlhttp.onreadystatechange = function() {
+        if (4 == xmlhttp.readyState) {
+            if (200 == xmlhttp.status) {
+                var Bodys = xmlhttp.responseText;
+                //document.getElementById('show_url').setAttribute("innerHTML", Bodys);
+                return_value = Bodys.split('@');
+                var len = return_value.length;
+                var sugar_build = document.getElementById('url_param_8');
+                sugar_build.options.length = 0;
+                for(i=0; i<(len-1); i++)
+                {
+                	//var varItem = new Option(objItemText, objItemValue);      
+                    sugar_build.options.add(new Option(return_value[i], return_value[i]));
+                }
+                //var varItem = new Option(objItemText, objItemValue);      
+                //objSelect.options.add(varItem);
+
+               // parent.document.all.iframemain.style.height = window.document.body.scrollHeight;
+               // parent.document.all.iframemain.style.width = window.document.body.scrollWidth;
+            }
+        }
+    }
+
+//    xmlhttp.open("get", "getUrl.php?url=http://sugjnk01.rtp.raleigh.ibm.com/ibm_published_builds_r05_hotfix7/", true);
+    xmlhttp.open("get", "getUrl.php?url=file:///document/gbyukg/www/sugar/autoInstall/" + filename, true);
+    //xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send("");
+}
+load_ajax();
 </script>
 </head>
 <body>
@@ -100,19 +125,23 @@ function input_check(obj)
 				<table>
 					<tr>
 						<td><label>地址:</label></td>
-						<!-- 						<td><input id="url_param_7" name="param_7" size="30" /></td> -->
 						<td><select id="url_param_7" name="url_param_7">
 								<?php 
-								foreach ($m as $key => $val)
+								foreach ($m[4] as $key => $val)
 								{
-									echo '<option>' . $val . '</option>';
+									echo '<option value="' . $val . '">' . $val . '</option>';
 								}
 								?>
 							</select></td>
 					</tr>
 					<tr>
 						<td><label>下载文件名:</label></td>
-						<td><input id="url_param_8" name="param_8" size="30" /></td>
+<!-- 						<td><input id="url_param_8" name="param_8" size="30" /></td> -->
+						<td>
+							<select id="url_param_8" name="url_param_8">
+								<option>选择下载文件</option>
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<td><label>数据库名:</label></td>
@@ -186,12 +215,13 @@ function input_check(obj)
 			</form>
 		</div>
 	</div>
+	<div id="show_url"></div>
 	<div style="border: solid 1px red; height:100px">
 	<?php
 	if(isset($_POST['sub']) && $_POST['sub'] != null)
 	{
-// 		exec_shell();
-// 		sleep(2);
+		exec_shell();
+		sleep(2);
 		ob_end_flush();
 		
 		$line = null;

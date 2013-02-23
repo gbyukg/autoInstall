@@ -1,12 +1,9 @@
 #!/usr/bin/env expect
-set timeout 1
+set timeout 20
 spawn su - db2inst1
-expect ":"
+expect "： $"
 send "admin\r"
-expect "$"
-send ". init4sugar.sh $argv\r"
-expect "$"
+expect "db2inst1@lock:~$ "
+send "bash init4sugar.sh [lindex $argv 0]\r"
 send "exit\r"
-expect "$"
-send "echo init database succussfully $argv!\r"
 interact
