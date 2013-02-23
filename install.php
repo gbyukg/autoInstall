@@ -86,7 +86,7 @@ $params ['post_fields'] = array (
 				'current_step' => 9,
 				'goto' => 'Next'
 				),
-		'第十一步骤' => array(
+		'第十一步' => array(
 				'current_step' => '10',
 				'language' => 'en_us',
 				'install_type' => 'custom',
@@ -118,7 +118,7 @@ foreach ($params['post_fields'] as $key1=>$val)
 	}
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
 // 	echo '<h1>' . $key1 .'</h1><br\>';
-	echo '\n' . $key1 .'...';
+	echo "\n" . $key1 .'...';
 	$response= curl_exec($ch);
 	//echo $response;
 }

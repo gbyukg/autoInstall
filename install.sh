@@ -52,17 +52,18 @@ function get_git()
 #下载指定build版本sugarcrm
 function get_url()
 {
+	readonly unzip_name="url_sugarcrm"
 	echo "选择的下载方式是:URL"
 	#生成的安装文件名
-	sugar_name=url_sugarcrm_${sugar_build}
+	sugar_name=${sugar_build}
 	if [ -e "${sugar_build}" ]; then
 		echo '删除原文件'
-		rm -rf ${sugar_build}
+		#rm -rf ${sugar_build}
 	fi
 	echo "开始下载${sugar_build}.zip..."
-	wget -c http://sugjnk01.rtp.raleigh.ibm.com/${sugar_branch}/${sugar_build}.zip
-
-	unzip -d ./url_sugarcrm ${sugar_build}
+	#wget -c http://sugjnk01.rtp.raleigh.ibm.com/${sugar_branch}/${sugar_build}.zip
+	rm -rf ${unzip_name}
+	unzip -d ./${unzip_name} ${sugar_build}.zip
 	#cd ${sugar_build}
 
 	rm -rf ${web_root}/${sugar_name}
@@ -80,7 +81,7 @@ function init_db()
 #更新dataloader配置文件
 function update_config()
 {
-	echo "更新dataloader配置文件：${1}/ibm/config.php"
+	echo "更新dataloader配置文件"
 	cat <<HERE > config.php
 <?php
 
@@ -118,12 +119,13 @@ HERE
 function data_loader()
 {
 	if [ "${install_method}" == "git" ]; then
-		cp -r ${git_store}ibm ${web_root}${sugar_name}
-		cd ${web_root}${sugar_name}/ibm/dataloaders/
-		update_config ${web_root}${sugar_name}ibm/dataloaders
+		cp -r ${git_store}/ibm ${web_root}${sugar_name}
+		cp -r ${git_store}/sugarcrm/tests ${web_root}${sugar_name}
 	else
-		echo 'url'
+		cp -r ${current_dir}/${unzip_name}/ibm ${web_root}${sugar_name}
 	fi
+	cd ${web_root}${sugar_name}/ibm/dataloaders/
+	update_config
 	echo '读取dataloader...'
 	php populate_SmallDataset.php
 }
@@ -153,23 +155,26 @@ elif [ "${install_method}" == "url" ]; then
 		echo "下载的文件名不能为空"
 		exit 0
 	fi
+	get_url
+else
+	echo "下载方式错误"
+	exit 1
 fi
 
 #初始化数据库
-#init_db
+init_db
 
 #开始安装
 cd ${current_dir}
-echo '安装sugarcrm...'
-#php install.php ${sugar_name} ${db_name}
+echo "安装sugarcrm,文件名${sugar_name}..."
+php install.php ${sugar_name} ${db_name}
 
 #dataloader
-#data_loader
+data_loader
 
-#unit test
-
+cd ${current_dir}
 rm ~*
 echo "success!!!"
 #打开浏览器
-#chromium-browser http://www.sugar.com/${sugar_name}
+chromium-browser http://www.sugar.com/${sugar_name}
 
