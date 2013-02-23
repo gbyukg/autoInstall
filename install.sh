@@ -1,19 +1,20 @@
 #!/bin/bash
-install_method=${1} #git/url
-db_name=${2}	#sugarcrm
-db_host=${3}	#localhost
-db_port=${4}	#50000
-db_user=${5}	#db2inst1
-db_pwd=${6}		#admin
-web_root="/document/gbyukg/www/sugar/"
-current_dir=$(pwd)
+readonly install_method=${1}		#git/url
+readonly db_name=${4:-sugarcrm}		#sugarcrm
+readonly db_host=${5:-loaclhost}	#localhost
+readonly db_port=${6:-50000}		#50000
+readonly db_user=${7:-db2inst1}		#db2inst1
+readonly db_pwd=${8:-admin}			#admin
+readonly web_root="/document/gbyukg/www/sugar/"
+readonly current_dir=$(pwd)
 
 #从github上获取代码并重构
 function get_git()
 {
+	echo "选择的下载方式是:GIT"
 	sugar_name=git_sugarcrm_${master_b}
-	git_store=/document/gbyukg/www/git_sugar/Mango/	#git代码库
-	build_path=/document/gbyukg/www/sugar/build_path/ #sugarcrm build路径
+	readonly git_store=/document/gbyukg/www/git_sugar/Mango/	#git代码库
+	readonly build_path=/document/gbyukg/www/sugar/build_path/ #sugarcrm build路径
 	cd ${git_store}
 
 	#验证分支是否存在
@@ -29,7 +30,7 @@ function get_git()
 	fi
 	git checkout -b install_${master_b} upstream/${master_b}
 	#合并子分支
-	if [ "X${merage_b}" == "X" ]; then
+	if [[ "${merge_b}" != "0" && "X${merge_b}" != "X" ]]; then
 		#git merge upstream/${merge_b}
 		echo "合并分支${merge_b}..."
 		git pull origin ${merge_b}
@@ -51,6 +52,7 @@ function get_git()
 #下载指定build版本sugarcrm
 function get_url()
 {
+	echo "选择的下载方式是:URL"
 	#生成的安装文件名
 	sugar_name=url_sugarcrm_${sugar_build}
 	if [ -e "${sugar_build}" ]; then
@@ -126,34 +128,48 @@ function data_loader()
 	php populate_SmallDataset.php
 }
 
-
+#入口
+if [[ "X${install_method}" = "X" ]]; then
+	echo "请选择获取代码方式(git/url)"
+	exit 1
+fi
 if [ "${install_method}" == "git" ]; then
+	readonly master_b=${2}
+	readonly merge_b=${3:-0}
+	if [[ "${master_b}" == "" ]]; then
+		echo "主分支名不能为空"
+		exit 0
+	fi
 	echo 'install from git...'
-	master_b=${7}
-	merge_b=${8}
 	get_git
 elif [ "${install_method}" == "url" ]; then
-	sugar_branch=${7}
-	sugar_build=${8}
+	readonly sugar_branch=${2}
+	readonly sugar_build=${3}
+	if [[ "${sugar_branch}" == "" ]]; then
+		echo "URL路径不能为空"
+		exit 0
+	fi
+	if [[ "${sugar_build}" == "" ]]; then
+		echo "下载的文件名不能为空"
+		exit 0
+	fi
 fi
 
 #初始化数据库
-init_db
+#init_db
 
 #开始安装
 cd ${current_dir}
 echo '安装sugarcrm...'
-php install.php ${sugar_name} ${db_name}
+#php install.php ${sugar_name} ${db_name}
 
 #dataloader
-data_loader
+#data_loader
+
+#unit test
 
 rm ~*
 echo "success!!!"
 #打开浏览器
-chromium-browser http://www.sugar.com/${sugar_name}
-
-
-
-
+#chromium-browser http://www.sugar.com/${sugar_name}
 
