@@ -123,4 +123,4 @@ foreach ($params['post_fields'] as $key1=>$val)
 	//echo $response;
 }
 curl_close($ch);
-echo "安装完毕\n访问地址：http://www.sugar.com/$filename/index.php\n";
+//echo "安装完毕\n访问地址：http://www.sugar.com/$filename/index.php\n";
