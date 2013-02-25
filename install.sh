@@ -17,20 +17,21 @@ function get_git()
 	readonly build_path=/document/gbyukg/www/sugar/build_path/ #sugarcrm build路径
 	cd ${git_store}
 
-	#验证分支是否存在
-	if [ $(git branch | grep install_${master_b} | wc -l) == '1' ]; then
-		git checkout ibm_current
-		git branch -D install_${master_b}
-	fi
 	echo "fetch分支${master_b}..."
 	git fetch upstream ${master_b}
 	if [ $? -ne 0 ]; then
 		echo 'fetch出错'
 		exit 1
 	fi
-	git checkout -b install_${master_b} upstream/${master_b}
+	
 	#合并子分支
 	if [[ "${merge_b}" != "0" && "X${merge_b}" != "X" ]]; then
+		#验证分支是否存在
+		if [ $(git branch | grep install_${master_b} | wc -l) == '1' ]; then
+			git checkout ibm_current
+			git branch -D install_${master_b}_${merge_b}
+		fi
+		git checkout -b install_${master_b}_${merge_b} upstream/${master_b}
 		#git merge upstream/${merge_b}
 		echo "合并分支${merge_b}..."
 		git pull origin ${merge_b}
@@ -39,7 +40,15 @@ function get_git()
 			exit 1
 		fi
 		sugar_name=git_sugarcrm_${master_b}_${merge_b}
+	else
+		#验证分支是否存在
+		if [ $(git branch | grep install_${master_b} | wc -l) == '1' ]; then
+			git checkout ibm_current
+			git branch -D install_${master_b}
+		fi
+		git checkout -b install_${master_b} upstream/${master_b}
 	fi
+
 	rm -rf ${build_path}* ${web_root}/${sugar_name}
 	cd build/rome
 	echo "开始构建..."
@@ -58,10 +67,10 @@ function get_url()
 	sugar_name=${sugar_build}
 	if [ -e "${sugar_build}" ]; then
 		echo '删除原文件'
-		#rm -rf ${sugar_build}
+		rm -rf ${sugar_build}
 	fi
 	echo "开始下载${sugar_build}.zip..."
-	#wget -c http://sugjnk01.rtp.raleigh.ibm.com/${sugar_branch}/${sugar_build}.zip
+	wget -c http://sugjnk01.rtp.raleigh.ibm.com/${sugar_branch}/${sugar_build}.zip
 	rm -rf ${unzip_name}
 	unzip -d ./${unzip_name} ${sugar_build}.zip
 	#cd ${sugar_build}
@@ -75,7 +84,7 @@ function init_db()
 {
 	echo "初始化数据库${db_name}..."
 	cd ${current_dir}
-	./initdb.exp ${db_name}
+	./initdb.exp ${db_name} ${db_pwd}
 }
 
 #更新dataloader配置文件
@@ -94,7 +103,7 @@ function update_config()
 		'port' => '${db_port}',
 		'username' => '${db_user}',
 		'password' => '${db_pwd}',
-		'name' => '$db_name',
+		'name' => '${db_name}',
 	),
 	
 	// default bean field/values used by Utils_Db::createInsert()

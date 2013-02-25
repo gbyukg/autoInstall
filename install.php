@@ -120,6 +120,7 @@ foreach ($params['post_fields'] as $key1=>$val)
 // 	echo '<h1>' . $key1 .'</h1><br\>';
 	echo "\n" . $key1 .'...';
 	$response= curl_exec($ch);
+	sleep(1);
 	//echo $response;
 }
 curl_close($ch);

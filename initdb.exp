@@ -2,7 +2,7 @@
 set timeout 20
 spawn su - db2inst1
 expect "： $"
-send "admin\r"
+send "[lindex $argv 1]\r"
 expect "db2inst1@lock:~$ "
 send "bash init4sugar.sh [lindex $argv 0]\r"
 send "exit\r"
