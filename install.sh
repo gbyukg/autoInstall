@@ -9,9 +9,11 @@ readonly web_root="/document/gbyukg/www/sugar/"
 readonly git_store="/document/gbyukg/www/git_sugar/Mango/"	#本地sugarcrm git代码库路径
 readonly build_path="/document/gbyukg/www/sugar/build_path/" #sugarcrm build路径
 readonly exit_branch="ibm_current"	#设定一个必然存在的分支，用于在删除分支时所切换到的分支
-readonly current_dir=$(pwd)			#获取当前所在路径信息
 readonly initdb_path="./"			#init4sugar.sh 数据库初始化脚本文件存放路径，以数据库实例名主目录为基准
 readonly unzip_name="url_sugarcrm/"	#以url方式安装时，将下载的文件解压到该文件中
+current_dir=${0%/*}/
+test "${current_dir}" = "./" && current_dir=$(pwd)/
+cd ${current_dir}
 
 #从github上获取代码并重构
 function get_git()
@@ -75,8 +77,7 @@ function get_url()
 function init_db()
 {
 	echo "初始化数据库${db_name}..."
-	cd ${current_dir}
-	./initdb.exp ${db_user} ${db_pwd} ${db_name} ${initdb_path}
+	expect ${current_dir}initdb.exp ${db_user} ${db_pwd} ${db_name} ${initdb_path}
 }
 
 #更新dataloader配置文件
@@ -168,12 +169,11 @@ init_db
 #开始安装
 cd ${current_dir}
 echo "安装sugarcrm,文件名${sugar_name}..."
-php install.php ${sugar_name} ${db_name}
+php ${current_dir}install.php ${sugar_name} ${db_name}
 
 #dataloader
 data_loader
 
-cd ${current_dir}
 rm ~*	#删除存放session的cookie文件
 echo "success!!!"
 #打开浏览器
