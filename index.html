@@ -31,32 +31,41 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+        <h3>使用说明</h3>
 
 <p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<pre><code>$
+./install.sh argv1 argv2 argv3 argv4 argv5 argv6 argv7 argv8
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>参数说明:</p>
+<ul>
+  <li>argv1:选择安装sugar方式，接受参数：git(git下载安装方式)/url(通过url下载指定版本方式)</li>
+  <li><ul><li>git:选择要进行安装的主分支名</li><li>url:要下载的文件的url后面部分信息</li></ul></li>
+  <li><ul><li>git:要进行合并的分支名，默认为0，表示不合并分支</li><li>url:要下载的文件名，不包含文件的扩展名(.zip)</li></ul></li>
+  <li>argv4:数据库名,默认sugar</li>
+  <li>argv5:数据库主机名，默认localhost</li>
+  <li>argv6:数据库端口，默认50000</li>
+  <li>argv7:数据库用户名，默认db2inst1</li>
+  <li>argv8:数据库密码，默认admin</li>
+</ul>
 
-<h3>Designer Templates</h3>
+<h4>注意事项</h4>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>只能在当前目录下使用./install.sh或使用绝对路径/aaa/bbb/ccc/install.sh方式执行此脚本，不能使用bash、sh、source等方式执行，否则路径会有错误。</p>
 
-<h3>Rather Drive Stick?</h3>
+<p>需要安装expect来支持切换数据库实例帐号后的数据库初始化工作，ubuntu安装方式：</p>
+<pre><code>$
+sudo apt-get install expect
+</code></pre>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>sugar安装过程采用PHP方式，需要PHP支持curl扩展功能</p>
 
-<h3>Authors and Contributors</h3>
+<h4>补充</h4>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>由于脚本中调用了expect脚本，在页面输出终端内容会有问题，一直无法解决。因此暂时无法集成到jenkins或janky中，当前所使用到的文件只有install.sh、install.php和initdb.exp三个文件。</p>
 
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
       </section>
     </div>
 
