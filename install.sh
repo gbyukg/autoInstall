@@ -174,7 +174,7 @@ php install.php ${sugar_name} ${db_name}
 data_loader
 
 cd ${current_dir}
-rm ~*
+rm ~*	#删除存放session的cookie文件
 echo "success!!!"
 #打开浏览器
 chromium-browser http://www.sugar.com/${sugar_name}
