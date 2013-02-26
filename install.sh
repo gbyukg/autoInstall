@@ -6,15 +6,18 @@ readonly db_port=${6:-50000}		#50000
 readonly db_user=${7:-db2inst1}		#db2inst1
 readonly db_pwd=${8:-admin}			#admin
 readonly web_root="/document/gbyukg/www/sugar/"
-readonly current_dir=$(pwd)
+readonly git_store="/document/gbyukg/www/git_sugar/Mango/"	#本地sugarcrm git代码库路径
+readonly build_path="/document/gbyukg/www/sugar/build_path/" #sugarcrm build路径
+readonly exit_branch="ibm_current"	#设定一个必然存在的分支，用于在删除分支时所切换到的分支
+readonly current_dir=$(pwd)			#获取当前所在路径信息
+readonly initdb_path="./"			#init4sugar.sh 数据库初始化脚本文件存放路径，以数据库实例名主目录为基准
+readonly unzip_name="url_sugarcrm/"	#以url方式安装时，将下载的文件解压到该文件中
 
 #从github上获取代码并重构
 function get_git()
 {
 	echo "选择的下载方式是:GIT"
 	sugar_name=git_sugarcrm_${master_b}
-	readonly git_store=/document/gbyukg/www/git_sugar/Mango/	#git代码库
-	readonly build_path=/document/gbyukg/www/sugar/build_path/ #sugarcrm build路径
 	cd ${git_store}
 
 	echo "fetch分支${master_b}..."
@@ -23,29 +26,20 @@ function get_git()
 		echo 'fetch出错'
 		exit 1
 	fi
-	
+	git checkout ${exit_branch}
 	#合并子分支
 	if [[ "${merge_b}" != "0" && "X${merge_b}" != "X" ]]; then
 		#验证分支是否存在
-		if [ $(git branch | grep install_${master_b} | wc -l) == '1' ]; then
-			git checkout ibm_current
-			git branch -D install_${master_b}_${merge_b}
-		fi
+		test $(git branch | grep install_${master_b}_${merge_b} | wc -l) -gt 0 && git branch -D install_${master_b}_${merge_b}
 		git checkout -b install_${master_b}_${merge_b} upstream/${master_b}
-		#git merge upstream/${merge_b}
+
 		echo "合并分支${merge_b}..."
 		git pull origin ${merge_b}
-		if [ $? -ne 0 ]; then
-			echo "merge分支upstream/${merge_b}出错"
-			exit 1
-		fi
+		test $? -eq 0 || exit 1
 		sugar_name=git_sugarcrm_${master_b}_${merge_b}
 	else
 		#验证分支是否存在
-		if [ $(git branch | grep install_${master_b} | wc -l) == '1' ]; then
-			git checkout ibm_current
-			git branch -D install_${master_b}
-		fi
+		test $(git branch | grep install_${master_b} | wc -l) -gt 0 && git branch -D install_${master_b}
 		git checkout -b install_${master_b} upstream/${master_b}
 	fi
 
@@ -61,10 +55,9 @@ function get_git()
 #下载指定build版本sugarcrm
 function get_url()
 {
-	readonly unzip_name="url_sugarcrm"
 	echo "选择的下载方式是:URL"
 	#生成的安装文件名
-	sugar_name=${sugar_build}
+	sugar_name=url_${sugar_build}
 	if [ -e "${sugar_build}" ]; then
 		echo '删除原文件'
 		rm -rf ${sugar_build}
@@ -73,10 +66,9 @@ function get_url()
 	wget -c http://sugjnk01.rtp.raleigh.ibm.com/${sugar_branch}/${sugar_build}.zip
 	rm -rf ${unzip_name}
 	unzip -d ./${unzip_name} ${sugar_build}.zip
-	#cd ${sugar_build}
 
 	rm -rf ${web_root}/${sugar_name}
-	mv url_sugarcrm/SugarUlt-Full-6.4.0 ${web_root}/${sugar_name}
+	mv ${unzip_name}/SugarUlt-Full-6.4.0 ${web_root}/${sugar_name}
 }
 
 #init db
@@ -84,7 +76,7 @@ function init_db()
 {
 	echo "初始化数据库${db_name}..."
 	cd ${current_dir}
-	./initdb.exp ${db_name} ${db_pwd}
+	./initdb.exp ${db_user} ${db_pwd} ${db_name} ${initdb_path}
 }
 
 #更新dataloader配置文件
@@ -186,4 +178,3 @@ rm ~*
 echo "success!!!"
 #打开浏览器
 chromium-browser http://www.sugar.com/${sugar_name}
-
