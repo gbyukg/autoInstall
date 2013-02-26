@@ -1,6 +1,6 @@
 #!/bin/bash
 readonly install_method=${1}		#git/url
-readonly db_name=${4:-sugarcrm}		#sugarcrm
+readonly db_name=${4:-sugar}		#sugarcrm
 readonly db_host=${5:-loaclhost}	#localhost
 readonly db_port=${6:-50000}		#50000
 readonly db_user=${7:-db2inst1}		#db2inst1
