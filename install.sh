@@ -92,7 +92,7 @@ function update_config()
 	// DB settings 
 	'db' => array(
 		'type' => 'db2', // mysql or db2
-		'host' => '${db_host}',
+		'host' => '127.0.0.1',
 		'port' => '${db_port}',
 		'username' => '${db_user}',
 		'password' => '${db_pwd}',
@@ -173,7 +173,7 @@ php ${current_dir}install.php ${sugar_name} ${db_name}
 
 #dataloader
 data_loader
-
+echo "\$sugar_config['logger']['level'] = 'debug';" >> ${web_root}/${sugar_name}/config_override.php
 rm ~*	#删除存放session的cookie文件
 echo "success!!!"
 #打开浏览器
