@@ -174,6 +174,7 @@ php ${current_dir}install.php ${sugar_name} ${db_name}
 #dataloader
 data_loader
 echo "\$sugar_config['logger']['level'] = 'debug';" >> ${web_root}/${sugar_name}/config_override.php
+cd ${current_dir}
 rm ~*	#删除存放session的cookie文件
 echo "success!!!"
 #打开浏览器
