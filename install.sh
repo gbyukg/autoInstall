@@ -23,7 +23,7 @@ function get_git()
 	cd ${git_store}
 
 	echo "fetch分支${master_b}..."
-	git fetch upstream ${master_b}
+	git fetch upstream 
 	if [ $? -ne 0 ]; then
 		echo 'fetch出错'
 		exit 1
@@ -70,7 +70,7 @@ function get_url()
 	unzip -d ./${unzip_name} ${sugar_build}.zip
 
 	rm -rf ${web_root}/${sugar_name}
-	mv ${unzip_name}/SugarUlt-Full-6.4.0 ${web_root}/${sugar_name}
+	mv ${unzip_name}/SugarUlt-Full-6.7.0 ${web_root}/${sugar_name}
 }
 
 #init db
@@ -130,6 +130,9 @@ function data_loader()
 	update_config
 	echo '读取dataloader...'
 	php populate_SmallDataset.php
+	cd ${web_root}${sugar_name}/custom/cli/
+	php -f cli.php task=UpdateUsersTopTierNode
+	php -f cli.php task=RebuildClientHierarchy
 }
 
 #入口
@@ -172,10 +175,13 @@ echo "安装sugarcrm,文件名${sugar_name}..."
 php ${current_dir}install.php ${sugar_name} ${db_name}
 
 #dataloader
-data_loader
-echo "\$sugar_config['logger']['level'] = 'debug';" >> ${web_root}/${sugar_name}/config_override.php
+#data_loader
+#echo "\$sugar_config['logger']['level'] = 'debug';" >> ${web_root}/${sugar_name}/config_override.php
 cd ${current_dir}
 rm ~*	#删除存放session的cookie文件
+if [ ${install_method} == "url" ]; then
+	rm ${sugar_build}.zip	#删除下载的zip文件
+fi
 echo "success!!!"
 #打开浏览器
-chromium-browser http://www.sugar.com/${sugar_name}
+google-chrome http://www.sugar.com/${sugar_name}
