@@ -1,0 +1,9 @@
+#!/usr/bin/env expect
+set timeout 10
+spawn su - [lindex $argv 0]
+expect -re "Password: |password: |密码： "
+send "[lindex $argv 1]\r"
+expect "*$ "
+send "bash [lindex $argv 3]init4sugar.sh [lindex $argv 2]\r"
+send "exit\r"
+interact
