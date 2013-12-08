@@ -1,0 +1,148 @@
+#searchForm {
+  position: relative;
+  float: left;
+  display: inline-block;
+  width: ~"-moz-calc(100% - 208px)";
+  width: ~"-webkit-calc(100% - 208px)";
+  width: ~"calc(100% - 208px)";
+
+  .btn {
+    margin-right: 0;
+  }
+  label {
+    &.hide {
+      display: none;
+    }
+  }
+  .rtlFloat(@direction,left);
+  .dropdown-menu {
+    // Typeahead
+    &.typeahead {
+      li, a {
+      padding: 0;
+      margin: 0;
+      .border-radius(0);
+      text-indent: 0;
+      }
+      li > a {
+      padding: 10px;
+      }
+    }
+  }
+
+  .advanced .dropdown-menu {
+    .border-radius(@borderRadiusSmall);
+  li {
+      &:first-child {
+        border-top: none;
+      }
+      label {
+        margin-bottom: 0;
+        display: inline-block;
+        width: 100%;
+        white-space: nowrap;
+        padding: 10px;
+        .select-module {
+          display: inline-block;
+          margin-right: 6px;
+        }
+      }
+  }
+  }
+}
+.navbar-search {
+  display: inline-block;
+  margin-left: 0;
+}
+
+.search-query-wrapper {
+  .box-sizing(border-box);
+  padding: 4px 5px;
+  width: auto;
+  height: 28px;
+  line-height: @baseLineHeight;
+  background: @white;
+  .border-radius(@borderRadiusSmall);
+  color: @grayDark;
+  .placeholder(@grayLight);
+  .navbar-search & .search-query {
+    margin: -10px;
+    display: inline;
+    width: 75%;
+    border: none;
+    padding: 4px 10px;
+    height: inherit;
+    background: transparent;
+    color: @grayDark;
+    box-shadow: none;
+    &:focus {
+      outline-color: transparent;
+      outline-style: none;
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.tag-wrapper {
+  background: @gray;
+  color: @white;
+  line-height: 20px;
+  font-size: @fontSizeSmall;
+  font-weight: 600;
+  padding: 0;
+  margin: -2px 2px 0 -3px;
+  border: none;
+  display: inline-block;
+  .border-radius(@borderRadiusSmall);
+  .tag-name {
+    padding: 2px 0 2px 5px;
+    display: inline-block;
+  }
+  .tag-remove {
+    cursor: pointer;
+    color: @black;
+    padding: 4px;
+    display: inline-block;
+    &:hover {
+      color: @grayLight;
+    }
+  }
+}
+
+.searchSuggestions {
+  border: 1px solid @grayLight;
+  box-shadow: @shadowWidget;
+  li {
+    background: @white;
+    &:not(:last-child) {
+      border-bottom: 1px solid @grayLighter;
+    }
+    &.selected {
+      background: @grayLighter;
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: -2px;
+        bottom: -1px;
+        width: 3px;
+        background: @linkColor;
+        background: -webkit-linear-gradient(@linkColor, @linkColorHover);
+        background: linear-gradient(@linkColor, @linkColorHover);
+      }
+    }
+    &.listItem:hover {
+      cursor: pointer;
+    }
+    a {
+      &:focus {
+        outline: none;
+      }
+    }
+    .tag-name {
+    padding: 2px 5px;
+    display: inline-block;
+  }
+  }
+}

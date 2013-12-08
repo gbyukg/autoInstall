@@ -1,0 +1,972 @@
+
+table.dataTable {
+  margin: 0 auto;
+  clear: both;
+  width: 100%;
+
+  /* ---------
+  TABLE HEADER CELL (specific) */
+  th {
+    line-height: 26px;
+    min-width: 20px;
+    //max-width: 100px;
+    font-weight: normal;
+    font-size: @fontSizeSmall;
+    color: @tableHeader;
+    border-right: 1px solid darken(@grayLighter,5%);
+    .rtl(@direction,ltr);
+    background-color: @white;
+
+    > * {
+      display: inline-block;
+      width: 100%;
+      overflow-x: hidden;
+      white-space: nowrap;
+      word-break: break-word;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+    }
+    &:last-child {
+      border-right: 0;
+    }
+    a {
+      text-decoration: none;
+    }
+    &.header-quota {
+      min-width: 70px;
+    }
+    .dropdown-menu {
+      text-align: left;
+    }
+    .btn input {
+      position: relative;
+      top: -1px;
+    }
+    .toggle-all {
+      margin: 10px;
+    }
+    &.nosort.select-all {
+      padding: 0;
+      .btn-group {
+        position: absolute;
+        top: 0;
+        //centering checkbox in btn-group
+        > .btn:first-child {
+          padding-top: 7px;
+          padding-bottom: 1px;
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE BODY */
+  & > tbody {
+    & > tr {
+      & > td {
+        height: 28px;
+        padding: 4px 8px;
+
+        white-space: nowrap;
+        word-break: break-word;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+        max-width: 82px;
+        border-top: 1px solid darken(@grayLighter, 5%);
+        border-bottom: 1px solid darken(@grayLighter, 5%);
+        background-color: @white;
+        .rtl(@direction,ltr);
+        &[data-type="currency"] {
+          text-align: right;
+          min-width: 132px;
+          max-width: 200px !important;
+          .list {
+            .box-sizing(border-box);
+            width: 100%;
+          }
+        }
+        &> *:not(.overflow-visible) {
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          display: inline-block;
+          white-space: nowrap;
+          word-break: break-word;
+          position: relative;
+          vertical-align: middle;
+        }
+        &:first-child {
+          overflow-x: visible;
+          span {
+            overflow: visible;
+          }
+        }
+        &:last-child {
+          overflow-x: visible;
+          border-right: 0;
+        }
+        .label-module {
+          width: 32px;
+          height: 32px;
+          margin-bottom: 2px;
+        }
+      }
+    }
+    & > tr.included {
+      & > td {
+        font-weight: bold;
+        &.commit_stage_field {
+          & > span:before {
+            width: 6px;
+            background-color: @blue;
+            position: absolute;
+            height: 29px;
+            left: 3px;
+            content: "";
+            top: -6px;
+          }
+          & > span:hover:before {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE FOOTER */
+  & > tfoot {
+    th {
+      white-space: normal;
+      word-break: break-word;
+    }
+    td {
+      font-weight: bold;
+      border-top: 2px solid @grayLight;
+    }
+    tr.overall th {
+      font-weight: bold;
+    }
+  }
+
+  /* ---------
+  TABLE ROW (specific) */
+  tr {
+    //last row
+    &:last-child {
+      td {
+        border-bottom: 2px solid darken(@grayLighter, 5%);
+      }
+    }
+    //for preview
+    &.highlighted {
+      &.current td {
+        #gradient > .vertical(darken(@grayLighter, 6%), darken(@grayLighter, 2%));
+        border-bottom: 1px solid darken(@grayLighter, 8%);
+        &:last-child {
+          z-index: 2;
+        }
+        .rowaction.btn {
+          .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important;");
+        }
+        .icon-eye-open {
+          color: @grayDark;
+        }
+      }
+    }
+    //also for preview??legacy?
+    &.active {
+      td {
+        background-image: url('@{textureSecondary}');
+        .icon-eye-open {
+          color:@black !important;
+        }
+      }
+    }
+    //inline editing
+    &.tr-inline-edit {
+      &> td {
+        overflow: visible;
+        background: #e5f1fc;
+        padding: 4px;
+        &> span {
+          width: 100%;
+        }
+        &:first-child {
+          .btn {
+            margin-left: 0;
+            padding: 0;
+          }
+        }
+        &:last-child {
+          .btn {
+            margin-left: 0;
+            width: 100%;
+            .box-sizing(border-box);
+          }
+        }
+
+        > .edit .select2-container-multi {
+          position: absolute;
+          top: -15px;
+        }
+
+        &[data-type="fullname"] {
+          min-width: 288px;
+          max-width: 288px !important;
+          .box-sizing(content-box);
+          height: 28px;
+          span.edit-cell {
+            display: inline-block;
+          }
+          .edit-cell[data-type="enum"] {
+            width: 80px;
+          }
+          .edit-cell[data-type="text"] {
+            width: 100px;
+          }
+        }
+        &[data-type="relate"] {
+          min-width: 150px;
+          max-width: 150px !important;
+        }
+        &[data-type="date"] {
+          min-width: 108px;
+          max-width: 108px !important;
+        }
+        &[data-type="datetimecombo"] {
+          min-width: 180px;
+          max-width: 180px !important;
+          .ui-timepicker-input {
+            width: 80px;
+          }
+        }
+        &[data-type="currency"] {
+          min-width: 128px;
+          max-width: 128px !important;
+        }
+        &[data-type="parent"] {
+          min-width: 200px;
+          max-width: 200px !important;
+        }
+        &[data-type="file"] {
+          min-width: 200px;
+          max-width: 200px;
+          input[type="file"] {
+            width: 192px;
+          }
+          .btn-link {
+            margin-left: 0;
+            padding: 4px 0;
+            max-width: 150px;
+          }
+          button {
+            float: right;
+          }
+        }
+        &[data-type="enum"] {
+          min-width: 150px;
+          max-width: 150px;
+          .select2-container.select2-dropdown-open {
+            min-width: 82px;
+          }
+          .select2-container-multi.select2-choices-pills-close .select2-search-choice div {
+            text-overflow: ellipsis;
+            max-width: 116px;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        }
+
+        input[type="text"] {
+          width: 100%;
+          min-width: 82px;
+        }
+        &> *:not(.overflow-visible) {
+          overflow: visible;
+        }
+
+        .input-append.date {
+          margin-bottom: 0;
+          font-size: @baseFontSize;
+          .add-on {
+            background-color: @white;
+            top: 6px;
+            padding: 1px 4px;
+            margin-left: -30px;
+          }
+          td {
+            background-color: @white;
+          }
+          input.datepicker {
+            width: 100px;
+          }
+          // reset datepicker since it is table inside table
+          span.year.active:hover,
+          span.year.active,
+          span.month.active:hover,
+          span.month.active,
+          td.active,
+          td.active:hover {
+            background-color: @gray;
+          }
+        }
+        .help-block {
+          display: none;
+        }
+      }
+    }
+    //alert messages
+    &.alert.alert-warning {
+      height: 35px;
+      &> td {
+        &> div {
+          position: absolute;
+          text-align: center;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE CELL (specific) */
+  td {
+    .actions {
+      display: inline-block;
+      white-space: nowrap;
+      a:hover:not(.disabled) {
+        color: @grayDark;
+      }
+      &.open a .icon-eye-open {
+        color: @gray !important;
+      }
+      .dropdown-menu {
+        text-align: left;
+      }
+    }
+    .btn-toolbar {
+      margin: -5px 0 -10px;
+    }
+    span.longtext {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &>span.dropdown {
+      width: auto;
+      overflow: visible;
+    }
+  }
+
+  /* ---------
+  MISC */
+  &.inline-edit-active {
+    tr {
+      td {
+        overflow-x: visible !important;
+      }
+    }
+    input[type="text"] {
+      width: auto;
+    }
+  }
+  input[type="text"] {
+    min-height: 28px;
+    //min-width: 100px;
+    .box-sizing(border-box);
+    padding: 4px 6px;
+  }
+  input[type=radio],
+  input[type=checkbox] {
+    border: 0;
+  }
+  input[type=checkbox] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  td.number,
+  tfoot th.number {
+    text-align: right;
+    .rtlTextAlign(@direction,left);
+    white-space: nowrap;
+    span.edit {
+      div.controls {
+        position: relative;
+      }
+    }
+  }
+  .icon-favorite {
+    margin-left: 14px;
+    vertical-align: middle;
+  }
+  //nutmeg ?legacy?
+  .icon-star {
+    margin: 0 16px;
+    color: @grayLight;
+  }
+  .active .icon-star {
+    color: @orange;
+  }
+  .help-block {
+    margin-bottom: 0px;
+  }
+}
+
+/* ---------
+FLEXLIST GENERIC */
+.flex-list-view {
+
+  /*LEFT ACTIONS ONLY*/
+  &.left-actions table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:first-child {
+        width: 55px;
+        text-align: center;
+        overflow-x: visible;
+
+      }
+    }
+    & > thead > tr > th {
+      &:first-child {
+        height: 28px;
+        padding: 7px 8px;
+        background: @white;
+        vertical-align: top;
+        line-height: 18px;
+        span {
+          overflow-x: visible;
+        }
+        .btn-group {
+          position: absolute;
+          margin-top: -9px;
+          left: 8px;
+        }
+        .btn.checkall {
+          padding: 4px 7px;
+        }
+      }
+    }
+    & > tbody > tr > td {
+      &:first-child {
+        padding: 6px 8px;
+        height: 22px;
+        margin: 2px 0;
+        z-index: 10;
+      }
+    }
+  }
+
+  /*RIGHT ACTIONS ONLY*/
+  &.right-actions table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:last-child {
+        width: 55px;
+        text-align: center;
+        overflow-x: visible;
+      }
+    }
+    & > thead > tr > th {
+      &:last-child {
+        height: 28px;
+        padding: 7px 8px;
+        background: @white;
+        vertical-align: top;
+        line-height: 18px;
+        > .dropdown {
+          overflow: visible;
+        }
+      }
+    }
+    & > tbody > tr > td {
+      &:last-child {
+        padding: 3px 8px;
+        height: 28px;
+        margin: 2px 0;
+        .list .btn.rowaction {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  /*DUPLICATES*/
+  table.dataTable.duplicates {
+    thead > tr > th,
+    thead > tr > th:first-child,
+    thead > tr > th:last-child {
+      background-color: lighten(@yellow_duplicate, 5%);
+    }
+    tbody > tr:nth-child(odd) > td {
+      background-color: @yellow_duplicate;
+    }
+    tbody > tr:nth-child(even) > td {
+      background-color: lighten(@yellow_duplicate, 5%);
+    }
+    tbody > tr > td:last-child .list {
+      overflow: visible;
+      display: inline-block;
+    }
+    tbody > tr:last-child > td {
+      border-bottom-width: 0;
+    }
+    /*create record dup check*/
+    &.duplicates-selectedit {
+      border-bottom: 1px solid darken(@grayLighter,5%);
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child {
+          padding-left: 20px;
+          max-width: 116px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 143px;
+        }
+        &:last-child {
+          width: 123px;
+          max-width: 123px;
+          padding-left: 4px;
+        }
+      }
+      .morecol .dropdown {
+        width: 140px;
+      }
+    }
+    /*convert lead dup check*/
+    &.duplicates-singleselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child {
+          width: 43px;
+        }
+        &:nth-child(2) {
+          padding-left: 67px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 53px;
+        }
+        &:last-child {
+          width: 29px;
+        }
+      }
+      .morecol .dropdown {
+        width: 45px;
+      }
+    }
+    /*lead record view find duplicates*/
+    &.duplicates-multiselect {
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child {
+          width: 29px;
+        }
+        &:nth-child(2) {
+          padding-left: 53px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 53px;
+        }
+        &:last-child {
+          width: 29px;
+        }
+        .morecol .dropdown {
+          width: 45px;
+        }
+      }
+      thead > tr > th:first-child {
+        //hack fix for messed up button group
+        .btn.checkall {
+          .border-radius(3px);
+        }
+        .btn-group span,
+        .dropdown-menu {
+          display: none;
+        }
+      }
+    }
+  }
+
+  /*FORECASTS SALES REP WORKSHEET*/
+  &.forecast-worksheet table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:first-child {
+        padding-left: 14px;
+      }
+    }
+    & > tbody > tr > td {
+      &.editableColumn {
+        padding: 0 2px;
+        min-width: 92px;
+        max-width: 100%;
+        &:first-child {
+          max-width: 80px;
+        }
+        span.detail,
+        span.list {
+          padding-right: 8px;
+          width: 100%;
+          box-sizing: border-box;
+          .ellipsis_inline, .currency-field {
+            padding-left: 14px;
+          }
+        }
+        span.detail:hover,
+        span.list:hover {
+          overflow: visible;
+          .edit-icon {
+            position: absolute;
+            left: -2px;
+            top: 3px;
+          }
+        }
+        .clickToEdit.active {
+          padding-right: 1px;
+        }
+      }
+      &:nth-last-child(2) {
+        padding-right: 71px;
+      }
+    }
+    & > tfoot > tr > td {
+      &:last-child {
+        border-top: none;
+        position: absolute;
+      }
+      &:nth-last-child(2) {
+        padding-right: 79px;
+      }
+    }
+  }
+
+  /*FORECASTS MANAGER WORKSHEET*/
+  &.forecast-manager-worksheet table.dataTable {
+    border-top: 1px solid darken(@grayLighter,10%);
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:first-child {
+        padding: 4px 8px 4px 14px;
+      }
+    }
+    & > tbody > tr > td {
+      padding: 4px 0;
+      span.detail:hover,
+      span.list:hover {
+        overflow: visible;
+        .edit-icon {
+          position: absolute;
+          left: -2px;
+          top: 6px;
+        }
+      }
+      &.tright .list {
+        padding: 0 8px;
+      }
+      .isEditable {
+        padding: 3px 8px 3px 3px;
+        &.active {
+          padding: 0 1px;
+        }
+        .clickToEdit {
+          padding-left: 8px;
+          &.active{
+            padding: 0;
+          }
+        }
+      }
+      &:nth-last-child(2) {
+        padding-right: 71px;
+      }
+    }
+    & > tfoot > tr > td {
+      &:last-child {
+        border-top: none;
+      }
+      &:nth-last-child(2) {
+        padding-right: 79px;
+      }
+    }
+    & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      .box-sizing(border-box);
+      background-color: @grayLight;
+      position: relative;
+      text-align: left;
+      .icon-arrow-down:before {
+        color: @red;
+      }
+      .icon-arrow-up:before {
+        color: @green;
+      }
+      span.list {
+        color: @grayDark;
+        padding: 10px 20px;
+        width: 100%;
+        .box-sizing(border-box);
+        .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.4);");
+        .relativetime {
+          color: @gray;
+        }
+      }
+    }
+  }
+
+}
+
+/**
+ * The flex list allows you to add left actions and right actions to the traditional list view.
+ * The code below aims to fix the first action column and the last action column
+ */
+.no-touch {
+  .flex-list-view {
+    .flex-list-view-content {
+      overflow-x: auto;
+      width: 100%;
+    }
+    table.dataTable {
+      position: static;
+    }
+
+    /*.flex-list.left-actions to fix the first column*/
+    &.left-actions.scroll-width table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:first-child {
+          position: absolute;
+          left: 0;
+          vertical-align: top;
+        }
+        //8 + 55 + 8 + 1 + 8 = 80
+        &:nth-child(2) {
+          padding-left: 79px;
+        }
+      }
+      & > thead > tr > th:first-child {
+        border-right: none;
+        z-index: 11;
+        &:after {
+          .right-shadow;
+          top: -1px;
+        }
+      }
+      & > tbody > tr > td:first-child {
+        border: none;
+        &:after {
+          .right-shadow;
+        }
+      }
+    }
+
+    /*.flex-list.right-actions to fix the last column*/
+    &.right-actions.scroll-width table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:last-child {
+          position: absolute;
+          right: 0;
+          vertical-align: top;
+        }
+        &:nth-last-child(2) {
+          padding-right: 79px;
+        }
+      }
+      & > thead > tr > th:nth-last-child(2) {
+        border-right: none;
+      }
+      & > thead > tr > th:last-child {
+        border-left: none;
+        &:before {
+          .left-shadow;
+          top: -1px;
+        }
+      }
+      & > tbody > tr > td:last-child {
+        border: none;
+        &:before {
+          .left-shadow;
+        }
+      }
+    }
+
+    /*forecast worksheets*/
+    &.right-actions.scroll-width.forecast-worksheet table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td,
+      & > tfoot > tr > td {
+        &:nth-last-child(2) {
+          max-width: 100%;
+        }
+      }
+    }
+    &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable {
+      & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
+        position: relative;
+      }
+    }
+
+    &:not(.scroll-width) table.dataTable > tbody > tr > td {
+      &:last-child {
+        .overflow-visible.list {
+          position: absolute;
+          > .list {
+            position: absolute;
+            top: -14px;
+            left: -14px;
+          }
+          > .actions.list {
+            left: -27px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.touch {
+  .flex-list-view {
+    overflow: scroll;
+  }
+  table.dataTable {
+    position: relative;
+  }
+}
+
+.subpanel .flex-list-view table.dataTable {
+  border-bottom: 0;
+  tr {
+    //last row
+    &:last-child {
+      td {
+        border-bottom: 0;
+      }
+    }
+  }
+}
+
+//from twitter-bootstrap/datatables.less
+.sorting_asc,
+.sorting_desc,
+.sorting {
+  cursor: pointer;
+  padding-right: 18px;
+  span {
+    margin-right: 9px;
+    position: relative;
+  }
+  span:after {
+    color: @grayLight;
+    font-family: FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    font-size: 11px;
+    line-height: 6px;
+    white-space: pre;
+    position: absolute;
+    top: 7px;
+    right: 0;
+    float: right;
+    content: "\f0d8\A\f0d7";
+  }
+}
+.sorting_asc,
+.sorting_desc {
+  span:after {
+    font-weight: bold;
+    color: @gray;
+  }
+}
+.sorting_asc span:after {
+  content: "\f0d8";
+}
+.sorting_desc span:after {
+  content: "\f0d7";
+  top: 12px;
+}
+.sorting_desc_disabled,
+.sorting_asc_disabled {
+  cursor: default;
+  span:after {
+    color: @grayLighter;
+  }
+}
+
+table th.nosort span:after {
+  content: "";
+  display: none;
+}
+
+table.dataTable th:active {
+  outline: none;
+}
+
+.morecol {
+  .btn {
+    margin: 0;
+  }
+  .dropdown {
+    &.open {
+      position: absolute;
+      right: 0;
+      width: 72px;
+      .btn {
+        .box-shadow(none);
+        background-color: darken(@grayLighter, 5%);
+        > [class^="icon-"] {
+          color: @grayDark;
+        }
+      }
+    }
+  }
+  .dropdown-menu {
+    .border-radius(2px);
+    margin-top: -2px;
+    button {
+      background: none;
+      border: none;
+      padding-left: 30px;
+      width: 100%;
+      text-align: left;
+      &.active {
+        font-weight: bold;
+        padding-left: 10px;
+        margin-left: 0;
+        .icon-ok {
+          margin-right: 5px;
+        }
+      }
+    }
+    li {
+      border-bottom: 1px solid @grayLighter;
+    }
+  }
+}
+
+[data-type=phone] .gc-cs-link { /*UIUX-1270*/
+  color: inherit;
+}
+
+/* iPad dirty hacks follow in the next three selectors */
+@media only screen
+and (orientation : landscape) {
+  .main-pane.span8 > div:first-child {
+    /* This fixes vertical scroll on landscape mode, for the instance when user navigates from portrait to landscape mode */
+    border-bottom:1px solid transparent;
+    -webkit-transition-delay: .1s;
+  }
+  .span8 .main-content > div {
+    /* This and the following selector take care of scroll fix when user toggles right hand side panel back and forth */
+    display: inline;
+  }
+  .span12 .main-content > div {
+    display: block;
+  }
+}

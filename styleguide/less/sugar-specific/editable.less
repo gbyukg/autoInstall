@@ -1,0 +1,94 @@
+/* Editable
+--------------*/
+.error {
+  &.input-append.select, &.input-append.select2 {
+    display: inline;
+  }
+  label,
+  .record-label {
+    font-weight: 500;
+    color: @errorText !important;
+  }
+  .help-block {
+    color: @errorText;
+    position: relative;
+  }
+  .add-on {
+    color: @errorText;
+    position: relative;
+    z-index: 2;
+    [class^="icon-"],
+    [class*=" icon-"] {
+      color: @errorText;
+    }
+  }
+  input {
+    border-color: @errorText !important;
+    margin-bottom: 0;
+    color: @errorText !important;
+    &:focus {
+      z-index: 3;
+      border-color: @errorText !important;
+      border-width: 1px !important;
+    }
+    &:focus + span.error-tooltip > i {
+      display: none;
+    }
+  }
+  textarea {
+    border-color:@errorText !important;
+    color: @errorText !important;
+  }
+  /* On fieldset/email, only the input that has an error must be decorate */
+  .control-group.email input, &[data-type=fieldset] input {
+    border-color: @gray !important;
+    color: @gray !important;
+  }
+  .control-group.email .input-append.error input , &[data-type=fieldset] .error input{
+    border-color: @errorText !important;
+    color: @errorText !important;
+  }
+
+  /* To maintain same size of input boxes, subtracting 27px for .add-on exclamation */
+  /* from twitter-bootstrap/forms.less
+    input.input-mini       { width: 33px; }
+    input.input-small      { width: 63px; }
+    input.input-medium     { width: 127px; }
+    input.input-large      { width: 183px; }
+    input.input-xlarge     { width: 243px; }
+    input.input-xxlarge    { width: 503px; }
+  */
+  &>div:first-child,
+  &>div:first-child label,
+  &> label {
+    font-weight: 500;
+    color: @errorText;
+  }
+  .input-append label {
+    color: @errorText;
+  }
+  .select2-container .select2-choice,
+  .select2-container .select2-choices,
+  .upload-field-custom.btn.avatar {
+    border-color: @errorText;
+  }
+  .select2-choice > .select2-chosen {
+    margin-right: 18px;
+  }
+  .help-block {
+    font-weight: normal;
+  }
+  .preview > span > .icon-plus {
+    border-color: @errorText;
+    color: @errorText;
+  }
+  label.file-upload {
+    background: @errorText;
+  }
+  .urleditable-wrap {
+    .editable-trigger > i,
+    .urleditable-field a {
+      color: @errorText !important;
+    }
+  }
+}

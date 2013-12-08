@@ -1,0 +1,31 @@
+.invites-description {
+    padding: 0 0 10px 10px;
+}
+
+.invitee-list {
+    list-style: none;
+    margin: 0;
+
+    .invitee-item {
+        border-top: 1px solid @grayLighter;
+        padding: 7.5px 10px 5px 10px;
+
+        .invite-user {
+            margin-top: 8px;
+
+            /* "!important" spam, I know, but trust me it looks better this way */
+            &:hover i {
+                color: #ececec!important;
+            }
+
+            i {
+                color: #fff!important;
+                text-shadow: 0.1em 0.1em #333333!important;
+            }
+        }
+
+        .invitee-name {
+            font-size: 80%;
+        }
+    }
+}

@@ -1,0 +1,117 @@
+
+.welcome {
+  position: absolute;
+  width: 100%;
+  .modal-header {
+    padding: 9px 10px;
+    .step-circle .icon-ok-sign {
+      display: inline-block;
+    }
+  }
+  .modal-body {
+    padding: 10px 8px 54px 8px;
+    min-height: 168px;
+    margin: 0;
+  }
+  .control-group {
+    input[type="password"],
+    input[type="text"] {
+      margin-bottom: 10px;
+    }
+  }
+  .thumbnails {
+    margin: 0;
+    li {
+      margin-bottom: 9px;
+      &.span3 .thumbnail {
+        padding: 14px 6px;
+        height: 44px;
+      }
+    }
+    .thumbnail {
+      height: 60px;
+      padding: 6px;
+      text-align: center;
+      color:  @gray;
+      font-size: @fontSizeSmall;
+      #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 3%));
+      transition: all 0s;
+      i {
+        font-size: 24px;
+        display: inline-block;
+        width: 100%;
+        color: @grayLight;
+      }
+      &:hover{
+        @shadow: 1px 1px 1px rgba(0,0,0,0.2),2px 2px 1px rgba(0,0,0,0.1);
+        .box-shadow(@shadow);
+        border: none;
+        i {
+          text-decoration: none;
+          color: @gray;
+        }
+      }
+    }
+  }
+}
+.thumbnail.signup,
+.thumbnail.login {
+  width: 240px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 4px;
+  .box-shadow(~"inset 0 -1px 10px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.8), 0 2px 1px rgba(0,0,0,.1)");
+  .brand {
+    margin: 9px auto 19px;
+  }
+  form {
+    margin-bottom: 0;
+  }
+  .help-block {
+    margin: 8px 0 0;
+    float: left;
+    display: block;
+  }
+  .control-group {
+    margin-bottom: 0;
+  }
+}
+.signup-footer,
+.login-footer {
+  text-align: right;
+  margin-right: 10px;
+  margin-top: 8px;
+}
+.modal .brand,
+.thumbnail .brand {
+  background: url('@{baseUrl}/img/sugar-red-logo.png') 50% 50% no-repeat;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-indent: -7000px;
+  margin: 0 auto;
+  width: 180px;
+  height: 24px;
+}
+
+.touch .welcome { /* UIUX-1121 */
+  border-right: 0.1em solid transparent;
+}
+
+.password-reqs-status {
+  border: 1px solid #EDC959;
+  background-color: #FCF8E3;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom: none;
+  padding: 4px;
+}
+.password-reqs {
+  list-style: none;
+  text-align: left;
+  margin-left: 0;
+  border: 1px solid #EDC959;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  padding: 4px 8px;
+  margin-bottom: 18px;
+}
