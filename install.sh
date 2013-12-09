@@ -6,7 +6,6 @@ readonly BUILD_DIR="/document/gbyukg/www/sugar/build_path"
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly INITDB_PATH="./"
 readonly KEY="internal sugar user 20100224"
-readonly SITE_URL="http://www.sugar.com/SugarUlt-Full-6.4.0"
 readonly SITE_USER="admin"
 readonly SITE_PWD="admin"
 readonly DB_USER="db2inst1"
@@ -14,6 +13,8 @@ readonly DB_PWD="admin"
 readonly DB_HOST="localhost"
 readonly DB_PORT="50000"
 
+site_url="http://localhost/"
+ver="6.4.0"
 db_name=""
 mas_remote="upstream"
 fet_remote="origin"
@@ -52,6 +53,14 @@ gen_install_name()
   [[ "X0" != "X${3}" ]] && install_name="${install_name}_${3}"
 }
 
+repear()
+{
+    git fetch ${mas_remote}
+    git checkout install_${install_name}
+    declare -r diffs=$(git diff ${mas_remote}/${mas_branch})
+    exit 0
+}
+
 pre_git()
 {
   echo ""
@@ -82,7 +91,9 @@ pre_git()
     rm -rf ${WEB_DIR}/${install_name}
   }>/dev/null 2>&1
   cd ${GIT_DIR}/build/rome
-  php build.php -clean -cleanCache -flav=ult -ver=6.4.0 -dir=sugarcrm -build_dir=${BUILD_DIR} && cp -r ${BUILD_DIR}/ult/sugarcrm ${WEB_DIR}/${install_name}
+  rm -rf ${BUILD_DIR}/*
+  php build.php -clean -cleanCache -flav=ult -ver=${ver} -dir=sugarcrm -build_dir=${BUILD_DIR} && cp -r ${BUILD_DIR}/ult/sugarcrm ${WEB_DIR}/${install_name}
+  [ ${ver} == "7.1.5" ] && rm -rf ${WEB_DIR}/${install_name}/sidecar && cp -r ${SCRIPT_DIR}/sidecar ${SCRIPT_DIR}/styleguide ${WEB_DIR}/${install_name}
 }
 
 pre_url()
@@ -90,9 +101,9 @@ pre_url()
   cus_echo "选择的是URL安装方式"
   cus_echo "开始下载文件:${down_file}"
   [ -d sugarcrm ] && rm -rf sugarcrm
-  wget -O sugarcrm.zip ${download_url}
+  wget -O sugarcrm.zip ${download_url} || exit 1
   cus_echo "开始解压"
-  unzip -d sugarcrm sugarcrm.zip &> /dev/null
+  unzip -d sugarcrm sugarcrm.zip &> /dev/null || exit 1
   [ -d ${WEB_DIR}/${install_name} ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf ${WEB_DIR}/${install_name}
   cp -r sugarcrm/SugarUlt-Full-6.7.0 ${WEB_DIR}/${install_name}
   rm -rf sugarcrm.zip
@@ -100,6 +111,8 @@ pre_url()
 
 install()
 {
+  site_url=${site_url}${install_name}
+
   # 初始化数据库
   time init_db
 
@@ -110,56 +123,56 @@ install()
   curl -o install.html -D cookies.cook http://localhost/${install_name}/install.php >/dev/null 2>&1
   sleep 3
 
-  curl -o install.html -b cookies.cook -d "language=en_us&current_step=0&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "language=en_us&current_step=0&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第一步"
-  curl -o install.html -b cookies.cook -d "current_step=1&goto=Next" http://localhost/${install_name}/install.php  >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "current_step=1&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第一.二步"
-  curl -o install.html -b cookies.cook -d "checkInstallSystem=true&to_pdf=1&sugar_body_only=1" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "checkInstallSystem=true&to_pdf=1&sugar_body_only=1" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第二步"
-  curl -o install.html -b cookies.cook -d "setup_license_accept=on&current_step=2&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "setup_license_accept=on&current_step=2&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第三步"
-  curl -o install.html -b cookies.cook -d "setup_license_key=${KEY}&install_type=custom&current_step=3&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "setup_license_key=${KEY}&install_type=custom&current_step=3&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第四步"
-  curl -o install.html -b cookies.cook -d "setup_db_type=ibm_db2&current_step=4&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "setup_db_type=ibm_db2&current_step=4&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "check database"
-  curl -o install.html -b cookies.cook -d "checkDBSettings=true&to_pdf=1&sugar_body_only=1&setup_db_database_name=${db_name}&setup_db_port_num=${DB_PORT}&setup_db_host_name=${DB_HOST}&setup_db_admin_user_name=${DB_USER}&setup_db_admin_password=${DB_PWD}&demoData=no" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "checkDBSettings=true&to_pdf=1&sugar_body_only=1&setup_db_database_name=${db_name}&setup_db_port_num=${DB_PORT}&setup_db_host_name=${DB_HOST}&setup_db_admin_user_name=${DB_USER}&setup_db_admin_password=${DB_PWD}&demoData=no" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第五步"
-  curl -o install.html -b cookies.cook -d "checkDBSettings=true&setup_db_drop_tables=false&goto=Next&setup_db_database_name=${db_name}&setup_db_host_name=${DB_HOST}&setup_db_prot_num=&setup_db_create_sugarsales_user=&setup_db_admin_user_name=${DB_USER}&setup_db_admin_password_entry=${DB_PWD}&setup_db_admin_password=${DB_PWD}&demoData=no&current_step=5" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "checkDBSettings=true&setup_db_drop_tables=false&goto=Next&setup_db_database_name=${db_name}&setup_db_host_name=${DB_HOST}&setup_db_prot_num=&setup_db_create_sugarsales_user=&setup_db_admin_user_name=${DB_USER}&setup_db_admin_password_entry=${DB_PWD}&setup_db_admin_password=${DB_PWD}&demoData=no&current_step=5" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第六步"
-  curl -o install.html -b cookies.cook -d "current_step=6&goto=Next&setup_site_url=${SITE_URL}&setup_system_name=SugarCRM&setup_site_admin_user_name=${SITE_USER}&setup_site_admin_password=${SITE_PWD}&setup_site_admin_password_retype=${SITE_PWD}" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "current_step=6&goto=Next&setup_site_url=${site_url}&setup_system_name=SugarCRM&setup_site_admin_user_name=${SITE_USER}&setup_site_admin_password=${SITE_PWD}&setup_site_admin_password_retype=${SITE_PWD}" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第七步"
-  curl -o install.html -b cookies.cook -d "current_step=7&goto=Next&setup_site_sugarbeet_anonymous_stats=yes&setup_site_session_path=&setup_site_log_dir=&setup_site_guid=" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "current_step=7&goto=Next&setup_site_sugarbeet_anonymous_stats=yes&setup_site_session_path=&setup_site_log_dir=&setup_site_guid=" ${site_url}/install.php >&/dev/null 2>&1
 
   cus_echo "第八步"
-  curl -o install.html -b cookies.cook -d "current_step=8&goto=Next" http://localhost/${install_name}/install.php
+  curl -o install.html -b cookies.cook -d "current_step=8&goto=Next" ${site_url}/install.php
 
   cus_echo "第九步"
-  curl -o install.html -b cookies.cook -d "current_step=9&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "current_step=9&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
 
   cus_echo "第十步"
-  curl -o install.html -b cookies.cook -d "current_step=10&language=en_us&install_type=custom&default_user_name=admin&goto=Next" http://localhost/${install_name}/install.php >&/dev/null 2>&1
+  curl -o install.html -b cookies.cook -d "current_step=10&language=en_us&install_type=custom&default_user_name=admin&goto=Next" ${site_url}/install.php >&/dev/null 2>&1
   sleep 3
 
   cus_echo "第十.二步"
-  curl -o install.html http://localhost/${install_name}/index.php
+  curl -o install.html ${site_url}/index.php
 
   after_install
 }
@@ -258,6 +271,7 @@ data_loader()
     {
       cd ${SCRIPT_DIR}/sugarcrm/ibm/dataloaders
     }
+
       data_config
 
       php populate_SmallDataset.php && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
@@ -268,6 +282,8 @@ data_loader()
       cd ${WEB_DIR}/${install_name}/batch_sugar/RTC_19211
       php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
 
+      [ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php
+
 }
 
 after_install()
@@ -276,6 +292,9 @@ after_install()
   time data_loader
 
   cd ${WEB_DIR}/${install_name}
+
+  cp ${SCRIPT_DIR}/ChromePhp.php include/ChromePhp.php
+  echo "require_once 'ChromePhp.php';" >> include/utils.php
 
   cus_echo "设置git ignore"
   add_ignore
@@ -304,16 +323,6 @@ after_install()
   }
 }
 
-install_name=sugarcrm
-
-  type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/${install_name}/index.php || 
-  {
-      type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/${install_name}/index.php || 
-      {
-        firefox http://localhost/${install_name}/index.php
-      }
-  }
-  exit 0
 # 入口文件
 for i in $@; do
   [[ "X${i}" == 'X--debug' ]] && set -x && shift && break
@@ -351,7 +360,6 @@ while [ "$1" != '' ]; do
       shift
       get_db_name
       gen_install_name git ${mas_branch} ${fet_branch}
-      echo ${install_name}
       ;;
     -u | --url )
       install_meth="URL"
@@ -361,7 +369,20 @@ while [ "$1" != '' ]; do
       down_file=${1:?"必须指定下载文件名"} && download_url="${download_url}/${1}"  && shift
       down_file=${down_file%\.*}
       gen_install_name url ${down_file} 0
-      echo ${install_name}
+      ;;
+    -r )
+      shift
+      mas_branch=${1:?"必须指定fetch主分支"} && shift
+      fet_branch=${1:?"必须指定合并分支，0为不合并任何分支"}
+      shift
+      gen_install_name git ${mas_branch} ${fet_branch}
+      repear
+      ;;
+    -v | --ver )
+      shift
+      ver=${1:?"使用该选项必须指定build版本号 默认6.4.0"}
+      [ "$1" == "7" ] && ver="7.1.5"
+      shift
       ;;
     * )
       shift
@@ -370,8 +391,17 @@ esac
 done
 
 [[ -z ${install_meth} ]] && bash ${SCRIPT_DIR}/install.sh --help && exit 1
+
 # 准备安装
-[[ "X${install_meth}" == "XGIT" ]] && time pre_git || time pre_url
+if [[ "X${install_meth}" == "XGIT" ]]; then
+    time pre_git
+elif [[ "X${install_meth}" == "XURL" ]]; then
+    time pre_url
+else
+    echo "install method : ${install_meth}"
+    exit 0
+fi
 # 开始安装
+
 time install
 
