@@ -282,7 +282,7 @@ data_loader()
       cd ${WEB_DIR}/${install_name}/batch_sugar/RTC_19211
       php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
 
-      [ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php
+      [ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php && cd ${WEB_DIR} && php demodata_for_db2_v4.php
 
 }
 
@@ -371,6 +371,7 @@ while [ "$1" != '' ]; do
       gen_install_name url ${down_file} 0
       ;;
     -r )
+      install_meth="refresh"
       shift
       mas_branch=${1:?"必须指定fetch主分支"} && shift
       fet_branch=${1:?"必须指定合并分支，0为不合并任何分支"}
@@ -392,15 +393,28 @@ done
 
 [[ -z ${install_meth} ]] && bash ${SCRIPT_DIR}/install.sh --help && exit 1
 
+case "${install_meth}" in
+    "GIT" )
+        time pre_git
+        ;;
+    "URL" )
+        time pre_url
+        ;;
+    "refresh" )
+        ;;
+    * )
+        exit 0
+esac
+
 # 准备安装
-if [[ "X${install_meth}" == "XGIT" ]]; then
-    time pre_git
-elif [[ "X${install_meth}" == "XURL" ]]; then
-    time pre_url
-else
-    echo "install method : ${install_meth}"
-    exit 0
-fi
+#if [[ "X${install_meth}" == "XGIT" ]]; then
+    #time pre_git
+#elif [[ "X${install_meth}" == "XURL" ]]; then
+    #time pre_url
+#else
+    #echo "install method : ${install_meth}"
+    #exit 0
+#fi
 # 开始安装
 
 time install
