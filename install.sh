@@ -406,16 +406,5 @@ case "${install_meth}" in
         exit 0
 esac
 
-# 准备安装
-#if [[ "X${install_meth}" == "XGIT" ]]; then
-    #time pre_git
-#elif [[ "X${install_meth}" == "XURL" ]]; then
-    #time pre_url
-#else
-    #echo "install method : ${install_meth}"
-    #exit 0
-#fi
-# 开始安装
-
 time install
 
