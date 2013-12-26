@@ -274,7 +274,9 @@ data_loader()
 
       data_config
 
-      php populate_SmallDataset.php && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
+      php populate_SmallDataset.php && {
+        [ "XGIT" == "X%{install_meth}" ] && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
+      }
 
       cd ${WEB_DIR}/${install_name}/custom/cli
       php -f cli.php task=RebuildClientHierarchy && php -f cli.php task=UpdateUsersTopTierNode
