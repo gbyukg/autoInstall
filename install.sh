@@ -96,6 +96,19 @@ pre_git()
   [ ${ver} == "7.1.5" ] && rm -rf ${WEB_DIR}/${install_name}/sidecar && cp -r ${SCRIPT_DIR}/sidecar ${SCRIPT_DIR}/styleguide ${WEB_DIR}/${install_name}
 }
 
+load_avl()
+{
+    cus_echo 开始导入AVL
+    cd ${WEB_DIR}/${insall_name}/custom/cli
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl.csv idlMode=true; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/01-update.csv; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/02-remap.csv; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/03-update.csv; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/04-update.csv; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/05-update.csv; \
+    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/06-winplan.csv
+}
+
 pre_url()
 {
   cus_echo "选择的是URL安装方式"
@@ -310,6 +323,8 @@ after_install()
     git add . && git commit -m 'init'
   }>&/dev/null
 
+  time load_avl
+
   cd ${SCRIPT_DIR}
 
   # 删除安装文件信息
@@ -325,7 +340,18 @@ after_install()
   }
 }
 
+install_check()
+{
+    pgrep httpd > /dev/null 2>&1
+    [ 0 != $? ] && echo "Apache 未起動" && exit 1
+
+    ES=$(ps aux | ack-grep elasticsearch | wc -l)
+    echo $es
+    ((${ES} < 2)) && echo "ES未起动" && exit 1
+}
 # 入口文件
+install_check
+
 for i in $@; do
   [[ "X${i}" == 'X--debug' ]] && set -x && shift && break
 done
@@ -340,6 +366,7 @@ while [ "$1" != '' ]; do
       echo '--mas-remote upstream'
       echo '--fet-remote origin'
       echo '--debug'
+      echo '-v 7 用于安装7.0版本'
       exit 0
       ;;
     --mas-remote )
