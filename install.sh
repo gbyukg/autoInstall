@@ -99,14 +99,14 @@ pre_git()
 load_avl()
 {
     cus_echo 开始导入AVL
-    cd ${WEB_DIR}/${insall_name}/custom/cli
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl.csv idlMode=true; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/01-update.csv; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/02-remap.csv; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/03-update.csv; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/04-update.csv; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/05-update.csv; \
-    php cli.php task=Avlimport file=${WEB_DIR}/${insall_name}/custom/install/avl/06-winplan.csv
+    cd ${WEB_DIR}/${install_name}/custom/cli
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl.csv idlMode=true
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/01-update.csv
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/02-remap.csv
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/03-update.csv
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/04-update.csv
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/05-update.csv
+    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/06-winplan.csv
 }
 
 pre_url()
@@ -288,7 +288,7 @@ data_loader()
       data_config
 
       php populate_SmallDataset.php && {
-        [ "XGIT" == "X%{install_meth}" ] && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
+        [ X"GIT" == X"${install_meth}" ] && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
       }
 
       cd ${WEB_DIR}/${install_name}/custom/cli
