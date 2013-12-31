@@ -306,6 +306,9 @@ after_install()
   # data loader
   time data_loader
 
+  # 导入avl
+  time load_avl
+
   cd ${WEB_DIR}/${install_name}
 
   cp ${SCRIPT_DIR}/ChromePhp.php include/ChromePhp.php
@@ -322,8 +325,6 @@ after_install()
   {
     git add . && git commit -m 'init'
   }>&/dev/null
-
-  time load_avl
 
   cd ${SCRIPT_DIR}
 
