@@ -25,6 +25,7 @@ install_name=""
 download_url="http://sugjnk01.rtp.raleigh.ibm.com"
 man_url=""
 down_file=""
+import_avl="0"
 star="********************"
 
 err_hand()
@@ -100,12 +101,19 @@ load_avl()
 {
     cus_echo 开始导入AVL
     cd ${WEB_DIR}/${install_name}/custom/cli
+    cus_echo "avl.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl.csv idlMode=true
+    cus_echo "01-update.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/01-update.csv
+    cus_echo "02-remap.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/02-remap.csv
+    cus_echo "03-update.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/03-update.csv
+    cus_echo "04-update.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/04-update.csv
+    cus_echo "05-update.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/05-update.csv
+    cus_echo "06-winplan.csv"
     php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/06-winplan.csv
 }
 
@@ -307,7 +315,7 @@ after_install()
   time data_loader
 
   # 导入avl
-  time load_avl
+  [ "X1" == "X${import_avl}" ] && time load_avl
 
   cd ${WEB_DIR}/${install_name}
 
@@ -415,6 +423,10 @@ while [ "$1" != '' ]; do
       [ "$1" == "7" ] && ver="7.1.5"
       shift
       ;;
+    --avl )
+        shift
+        import_avl="1";
+        ;;
     * )
       shift
       ;;
