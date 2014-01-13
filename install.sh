@@ -296,7 +296,7 @@ data_loader()
       data_config
 
       php populate_SmallDataset.php && {
-        [ X"GIT" == X"${install_meth}" ] && git checkout ${GIT_DIR}/ibm/dataloaders/config.php
+        [ X"GIT" == X"${install_meth}" ] && cd ${GIT_DIR} && git checkout ibm/dataloaders/config.php
       }
 
       cd ${WEB_DIR}/${install_name}/custom/cli
