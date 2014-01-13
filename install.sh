@@ -234,7 +234,7 @@ data_config()
         // sugarcrm
         'sugarcrm' => array(
                 // full path of the installed sugarcrm instance
-                'directory' => '/srv/www/htdocs/build/dev/ult/sugarcrm',
+                'directory' => '${WEB_DIR}/${install_name}',
         ),
 
 );
