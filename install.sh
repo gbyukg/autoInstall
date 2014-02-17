@@ -23,7 +23,7 @@ fet_branch=""
 install_meth=""
 install_name=""
 download_url="http://sugjnk01.rtp.raleigh.ibm.com"
-man_url=""
+#man_url=""
 down_file=""
 import_avl="0"
 star="********************"
@@ -57,7 +57,7 @@ gen_install_name()
 repear()
 {
     git fetch ${mas_remote}
-    git checkout install_${install_name}
+    git checkout install_"${install_name}"
     declare -r diffs=$(git diff ${mas_remote}/${mas_branch})
     exit 0
 }
@@ -67,18 +67,18 @@ pre_git()
   echo ""
   echo "选择的是GIT安装方式"
   echo ""
-  cd ${GIT_DIR}
+  cd "${GIT_DIR}"
 
   install_branch_name="install_${install_name}"
 
   {
-    git show-branch ${install_branch_name}>/dev/null && 
+    git show-branch "${install_branch_name}">/dev/null && 
     {
-      git checkout ibm_current && cus_echo "删除已有分支 : ${install_branch_name}" && git branch -D ${install_branch_name}
-    } 2>>${SCRIPT_DIR}/install.log && err_hand "错了！！！！！！！！！！"
+      git checkout ibm_current && cus_echo "删除已有分支 : ${install_branch_name}" && git branch -D "${install_branch_name}"
+    } 2>>"${SCRIPT_DIR}"/install.log && err_hand "错了！！！！！！！！！！"
   }
 
-  cus_echo "fetch远程代码 : ${mas_remote}" && git fetch ${mas_remote} && cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" && git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} && {
+  cus_echo "fetch远程代码 : ${mas_remote}" && git fetch ${mas_remote} && cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" && git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} && cus_echo "submodule update" && git submodule update --init && {
     [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
       {
         cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
@@ -88,33 +88,33 @@ pre_git()
 
   cus_echo "构建代码 -> ${BUILD_DIR}"
   {
-    rm -rf ${BUILD_DIR}/*
-    rm -rf ${WEB_DIR}/${install_name}
+    rm -rf "${BUILD_DIR}"/*
+    rm -rf "${WEB_DIR}"/"${install_name}"
   }>/dev/null 2>&1
-  cd ${GIT_DIR}/build/rome
-  rm -rf ${BUILD_DIR}/*
-  php build.php -clean -cleanCache -flav=ult -ver=${ver} -dir=sugarcrm -build_dir=${BUILD_DIR} && cp -r ${BUILD_DIR}/ult/sugarcrm ${WEB_DIR}/${install_name}
-  [ ${ver} == "7.1.5" ] && rm -rf ${WEB_DIR}/${install_name}/sidecar && cp -r ${SCRIPT_DIR}/sidecar ${SCRIPT_DIR}/styleguide ${WEB_DIR}/${install_name}
+  cd "${GIT_DIR}"/build/rome
+  rm -rf "${BUILD_DIR}"/*
+  php build.php -clean -cleanCache -flav=ult -ver="${ver}" -dir=sugarcrm -build_dir="${BUILD_DIR}" && cp -r "${BUILD_DIR}"/ult/sugarcrm "${WEB_DIR}"/"${install_name}"
+#  [ ${ver} == "7.1.5" ] && rm -rf ${WEB_DIR}/${install_name}/sidecar && cp -r ${SCRIPT_DIR}/sidecar ${SCRIPT_DIR}/styleguide ${WEB_DIR}/${install_name}
 }
 
 load_avl()
 {
     cus_echo 开始导入AVL
-    cd ${WEB_DIR}/${install_name}/custom/cli
+    cd "${WEB_DIR}"/"${install_name}"/custom/cli
     cus_echo "avl.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl.csv idlMode=true
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl.csv idlMode=true
     cus_echo "01-update.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/01-update.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/01-update.csv
     cus_echo "02-remap.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/02-remap.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/02-remap.csv
     cus_echo "03-update.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/03-update.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/03-update.csv
     cus_echo "04-update.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/04-update.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/04-update.csv
     cus_echo "05-update.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/05-update.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/05-update.csv
     cus_echo "06-winplan.csv"
-    php cli.php task=Avlimport file=${WEB_DIR}/${install_name}/custom/install/avl/06-winplan.csv
+    php cli.php task=Avlimport file="${WEB_DIR}"/"${install_name}"/custom/install/avl/06-winplan.csv
 }
 
 pre_url()
@@ -125,8 +125,8 @@ pre_url()
   wget -O sugarcrm.zip ${download_url} || exit 1
   cus_echo "开始解压"
   unzip -d sugarcrm sugarcrm.zip &> /dev/null || exit 1
-  [ -d ${WEB_DIR}/${install_name} ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf ${WEB_DIR}/${install_name}
-  cp -r sugarcrm/SugarUlt-Full-6.7.0 ${WEB_DIR}/${install_name}
+  [ -d "${WEB_DIR}"/"${install_name}" ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf "${WEB_DIR}"/"${install_name}"
+  cp -r sugarcrm/SugarUlt-Full-6.7.0 "${WEB_DIR}"/"${install_name}"
   rm -rf sugarcrm.zip
 }
 
@@ -138,7 +138,7 @@ install()
   time init_db
 
   cus_echo "开始安装"
-  cd ${SCRIPT_DIR}
+  cd "${SCRIPT_DIR}"
 
   cus_echo "安装初始化"
   curl -o install.html -D cookies.cook http://localhost/${install_name}/install.php >/dev/null 2>&1
@@ -249,6 +249,10 @@ add_ignore()
 *.log
 .*
 cache
+create_tag.sh
+repair.sh
+tags
+sidecar/minified
 IGNORE
 }
 
@@ -293,20 +297,44 @@ data_loader()
       cd ${SCRIPT_DIR}/sugarcrm/ibm/dataloaders
     }
 
-      data_config
+  data_config
 
-      php populate_SmallDataset.php && {
-        [ X"GIT" == X"${install_meth}" ] && cd ${GIT_DIR} && git checkout ibm/dataloaders/config.php
-      }
+  php populate_SmallDataset.php && {
+    [ X"GIT" == X"${install_meth}" ] && cd ${GIT_DIR} && git checkout ibm/dataloaders/config.php
+  }
 
-      cd ${WEB_DIR}/${install_name}/custom/cli
-      php -f cli.php task=RebuildClientHierarchy && php -f cli.php task=UpdateUsersTopTierNode
+  #cd ${WEB_DIR}/${install_name}/custom/cli
+  #php -f cli.php task=RebuildClientHierarchy && php -f cli.php task=UpdateUsersTopTierNode
 
-      cd ${WEB_DIR}/${install_name}/batch_sugar/RTC_19211
-      php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
+  cd ${WEB_DIR}/${install_name}/batch_sugar/RTC_19211
+  php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
 
-      [ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php && cd ${WEB_DIR} && php demodata_for_db2_v4.php
+  #[ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php && cd ${WEB_DIR} && php demodata_for_db2_v4.php
 
+}
+
+create_tag()
+{
+    cat << CREATETAG > create_tag.sh
+exec ctags-exuberant -f tags \\
+-h ".php" -R \\
+--exclude="\.git" \\
+--exclude="cache" \\
+--exclude="include/javascript" \\
+--exclude="tests" \\
+--exclude="custom/include/javascript" \\
+--exclude="sidecar" \\
+--exclude="styleguide" \\
+--totals=yes \\
+--tag-relative=yes \\
+--PHP-kinds=+cf \\
+--regex-PHP='/abstract class ([^ ]*)/\1/c/' \\
+--regex-PHP='/interface ([^ ]*)/\1/c/' \\
+--regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'
+CREATETAG
+
+    chmod 755 create_tag.sh
+    mv create_tag.sh "${WEB_DIR}/${install_name}" && cd "${WEB_DIR}/${install_name}" && pwd && ./create_tag.sh
 }
 
 after_install()
@@ -317,7 +345,7 @@ after_install()
   # 导入avl
   [ "X1" == "X${import_avl}" ] && time load_avl
 
-  cd ${WEB_DIR}/${install_name}
+  cd "${WEB_DIR}/${install_name}"
 
   cp ${SCRIPT_DIR}/ChromePhp.php include/ChromePhp.php
   echo "require_once 'ChromePhp.php';" >> include/utils.php
@@ -328,23 +356,30 @@ after_install()
   cus_echo "添加Zend Studio项目文件"
   add_project
 
+  type ctags > /dev/null 2>&1
+  [ 0 == $? ] && {
+      cus_echo "生成tags"
+      create_tag
+  }
+  cp "${SCRIPT_DIR}"/repair.sh "${WEB_DIR}"/"${install_name}"/repair.sh
+
   cus_echo "初始化GIT库"
   git init
   {
     git add . && git commit -m 'init'
   }>&/dev/null
 
-  cd ${SCRIPT_DIR}
+  cd "${SCRIPT_DIR}"
 
   # 删除安装文件信息
   rm -rf *.html cookies.cook
 
   cus_echo "安装完成"
-  type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/${install_name}/index.php || 
+  type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php || 
   {
-      type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/${install_name}/index.php || 
+      type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php || 
       {
-        firefox http://localhost/${install_name}/index.php
+        firefox http://localhost/"${install_name}"/index.php
       }
   }
 }
@@ -355,13 +390,12 @@ install_check()
     [ 0 != $? ] && echo "Apache 未起動" && exit 1
 
     ES=$(ps aux | ack-grep elasticsearch | wc -l)
-    echo $es
+    #echo $es
     ((${ES} < 2)) && echo "ES未起动" && exit 1
 }
 # 入口文件
 install_check
-
-for i in $@; do
+for i in "$@"; do
   [[ "X${i}" == 'X--debug' ]] && set -x && shift && break
 done
 
@@ -397,16 +431,16 @@ while [ "$1" != '' ]; do
       fet_branch=${1:?"必须指定合并分支，0为不合并任何分支"}
       shift
       get_db_name
-      gen_install_name git ${mas_branch} ${fet_branch}
+      gen_install_name git "${mas_branch}" "${fet_branch}"
       ;;
     -u | --url )
       install_meth="URL"
       shift
       get_db_name
-      man_url=${1:?"必须指定下载路径"} && download_url="${download_url}/${1}" && shift
+      #man_url=${1:?"必须指定下载路径"} && download_url="${download_url}/${1}" && shift
       down_file=${1:?"必须指定下载文件名"} && download_url="${download_url}/${1}"  && shift
       down_file=${down_file%\.*}
-      gen_install_name url ${down_file} 0
+      gen_install_name url "${down_file}" 0
       ;;
     -r )
       install_meth="refresh"
@@ -414,7 +448,7 @@ while [ "$1" != '' ]; do
       mas_branch=${1:?"必须指定fetch主分支"} && shift
       fet_branch=${1:?"必须指定合并分支，0为不合并任何分支"}
       shift
-      gen_install_name git ${mas_branch} ${fet_branch}
+      gen_install_name git "${mas_branch}" "${fet_branch}"
       repear
       ;;
     -v | --ver )
