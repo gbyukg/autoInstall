@@ -58,7 +58,7 @@ repear()
 {
     git fetch ${mas_remote}
     git checkout install_"${install_name}"
-    declare -r diffs=$(git diff ${mas_remote}/${mas_branch})
+    declare -r diffs=$(git diff "${mas_remote}"/"${mas_branch}")
     exit 0
 }
 
@@ -193,7 +193,7 @@ install()
   sleep 3
 
   cus_echo "第十.二步"
-  curl -o install.html ${site_url}/index.php
+  curl -o install.html "${site_url}"/index.php
 
   after_install
 }
@@ -203,7 +203,7 @@ init_db()
   type expect>&/dev/null 2>&1
   [[ ! $? == 0  ]] && echo "系统需要安装expect支持，使用 : sudo apt-get install expect expect-dev 进行安装" && echo "" && exit 1
   cus_echo "初始化数据库 : ${db_name} "
-  expect ${SCRIPT_DIR}/initdb.exp ${DB_USER} ${DB_PWD} ${db_name} ${INITDB_PATH}
+  expect "${SCRIPT_DIR}"/initdb.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 }
 
 data_config()
@@ -287,26 +287,35 @@ PROJECT
 data_loader()
 {
   cus_echo "data loader"
-  [[ "XGIT" == "X${install_meth}" ]] &&
-    {
-      cd ${GIT_DIR}/ibm/dataloaders
-      cp -r ${GIT_DIR}/sugarcrm/tests ${WEB_DIR}/${install_name}
-      chmod 755 ${WEB_DIR}/${install_name}/tests/phpunit.php ${WEB_DIR}/${install_name}/tests/phpunit2.php
-    } ||
-    {
-      cd ${SCRIPT_DIR}/sugarcrm/ibm/dataloaders
-    }
+
+  if [[ "XGIT" == "X${install_meth}" ]]; then
+      cd "${GIT_DIR}"/ibm/dataloaders
+      cp -r "${GIT_DIR}"/sugarcrm/tests "${WEB_DIR}"/"${install_name}"
+      chmod 755 "${WEB_DIR}"/"${install_name}"/tests/phpunit.php "${WEB_DIR}"/"${install_name}"/tests/phpunit2.php
+  else
+      cd "${SCRIPT_DIR}"/sugarcrm/ibm/dataloaders
+  fi
+
+  #[[ "XGIT" == "X${install_meth}" ]] &&
+    #{
+      #cd "${GIT_DIR}"/ibm/dataloaders
+      #cp -r "${GIT_DIR}"/sugarcrm/tests "${WEB_DIR}"/"${install_name}"
+      #chmod 755 "${WEB_DIR}"/"${install_name}"/tests/phpunit.php "${WEB_DIR}"/"${install_name}"/tests/phpunit2.php
+    #} ||
+    #{
+      #cd "${SCRIPT_DIR}"/sugarcrm/ibm/dataloaders
+    #}
 
   data_config
+    pwd
+  php populate_SmallDataset.php
+  [ X"GIT" == X"${install_meth}" ] && cd "${GIT_DIR}" && git checkout ibm/dataloaders/config.php
 
-  php populate_SmallDataset.php && {
-    [ X"GIT" == X"${install_meth}" ] && cd ${GIT_DIR} && git checkout ibm/dataloaders/config.php
-  }
 
   #cd ${WEB_DIR}/${install_name}/custom/cli
   #php -f cli.php task=RebuildClientHierarchy && php -f cli.php task=UpdateUsersTopTierNode
 
-  cd ${WEB_DIR}/${install_name}/batch_sugar/RTC_19211
+  cd "${WEB_DIR}"/"${install_name}"/batch_sugar/RTC_19211
   php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
 
   #[ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php && cd ${WEB_DIR} && php demodata_for_db2_v4.php
@@ -334,7 +343,7 @@ exec ctags-exuberant -f tags \\
 CREATETAG
 
     chmod 755 create_tag.sh
-    mv create_tag.sh "${WEB_DIR}/${install_name}" && cd "${WEB_DIR}/${install_name}" && pwd && ./create_tag.sh
+    ./create_tag.sh
 }
 
 after_install()
@@ -347,7 +356,7 @@ after_install()
 
   cd "${WEB_DIR}/${install_name}"
 
-  cp ${SCRIPT_DIR}/ChromePhp.php include/ChromePhp.php
+  cp "${SCRIPT_DIR}"/ChromePhp.php include/ChromePhp.php
   echo "require_once 'ChromePhp.php';" >> include/utils.php
 
   cus_echo "设置git ignore"
@@ -372,7 +381,7 @@ after_install()
   cd "${SCRIPT_DIR}"
 
   # 删除安装文件信息
-  rm -rf *.html cookies.cook
+  rm -rf \*.html cookies.cook
 
   cus_echo "安装完成"
   type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php || 
@@ -391,7 +400,7 @@ install_check()
 
     ES=$(ps aux | ack-grep elasticsearch | wc -l)
     #echo $es
-    ((${ES} < 2)) && echo "ES未起动" && exit 1
+    (("${ES}" < 2)) && echo "ES未起动" && exit 1
 }
 # 入口文件
 install_check
@@ -467,7 +476,7 @@ while [ "$1" != '' ]; do
 esac
 done
 
-[[ -z ${install_meth} ]] && bash ${SCRIPT_DIR}/install.sh --help && exit 1
+[[ -z "${install_meth}" ]] && bash "${SCRIPT_DIR}"/install.sh --help && exit 1
 
 case "${install_meth}" in
     "GIT" )
