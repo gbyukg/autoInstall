@@ -54,12 +54,32 @@ gen_install_name()
   [[ "X0" != "X${3}" ]] && install_name="${install_name}_${3}"
 }
 
-repear()
+get_pull()
 {
-    git fetch ${mas_remote}
-    git checkout install_"${install_name}"
-    declare -r diffs=$(git diff "${mas_remote}"/"${mas_branch}")
-    exit 0
+    local install_dir="${WEB_DIR}/${2}"
+    local patch_name="${1}.patch"
+    cd "${SCRIPT_DIR}"
+    if [ ! -d "${install_dir}" ]; then
+        cus_echo "文件夹：${install_dir} 不存在"
+        exit 0
+    fi
+    curl -o "diff.patch" -u gbyukg https://api.github.com/repos/sugareps/Mango/pulls/"${1}" \
+    -H "Accept: application/vnd.github.v3.patch"
+
+    sed -e 's/\([a,b]\)\/sugarcrm/\1/g' diff.patch > "${patch_name}"
+    rm "diff.patch"
+    mv -f "${1}.patch" "${install_dir}"
+    cd "${install_dir}"
+    pwd
+    git apply --check "${patch_name}"
+    if [ "0" != "$?" ]; then
+        cus_echo "无法应用补丁文件：${patch_name}"
+        exit 1;
+    fi
+    cus_echo "将要被应用的补丁文件内容"
+    git apply --stat "${patch_name}"
+    git apply "${patch_name}"
+    exit 0;
 }
 
 pre_git()
@@ -253,6 +273,7 @@ create_tag.sh
 repair.sh
 tags
 sidecar/minified
+*.patch
 IGNORE
 }
 
@@ -419,6 +440,7 @@ while [ "$1" != '' ]; do
       echo '--fet-remote origin'
       echo '--debug'
       echo '-v 7 用于安装7.0版本'
+      echo '-r 补丁号 sugarcrm的安装路径'
       exit 0
       ;;
     --mas-remote )
@@ -454,11 +476,10 @@ while [ "$1" != '' ]; do
     -r )
       install_meth="refresh"
       shift
-      mas_branch=${1:?"必须指定fetch主分支"} && shift
-      fet_branch=${1:?"必须指定合并分支，0为不合并任何分支"}
+      pull_no=${1:?"必须指定pull request号"} && shift
+      sugar_dir=${1:?"必须指定sugarcrm安装目录"}
       shift
-      gen_install_name git "${mas_branch}" "${fet_branch}"
-      repear
+      get_pull "${pull_no}" "${sugar_dir}"
       ;;
     -v | --ver )
       shift
