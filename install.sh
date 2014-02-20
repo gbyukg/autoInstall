@@ -59,18 +59,21 @@ get_pull()
     local install_dir="${WEB_DIR}/${2}"
     local patch_name="${1}.patch"
     cd "${SCRIPT_DIR}"
+    source "${HOME}/.ssh/token"
     if [ ! -d "${install_dir}" ]; then
         cus_echo "文件夹：${install_dir} 不存在"
-        exit 0
+        exit 1
     fi
-    curl -o "diff.patch" -u gbyukg https://api.github.com/repos/sugareps/Mango/pulls/"${1}" \
-    -H "Accept: application/vnd.github.v3.patch"
+
+    curl -o "diff.patch" https://api.github.com/repos/sugareps/Mango/pulls/"${1}" \
+    -H "Accept: application/vnd.github.v3.patch" \
+    -H "Authorization: token ${token}"
 
     sed -e 's/\([a,b]\)\/sugarcrm/\1/g' diff.patch > "${patch_name}"
     rm "diff.patch"
     mv -f "${1}.patch" "${install_dir}"
     cd "${install_dir}"
-    pwd
+
     git apply --check "${patch_name}"
     if [ "0" != "$?" ]; then
         cus_echo "无法应用补丁文件：${patch_name}"
