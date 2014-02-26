@@ -145,7 +145,7 @@ pre_url()
   cus_echo "选择的是URL安装方式"
   cus_echo "开始下载文件:${down_file}"
   [ -d sugarcrm ] && rm -rf sugarcrm
-  wget -O sugarcrm.zip ${download_url} || exit 1
+  wget -O sugarcrm.zip "${download_url}" || exit 1
   cus_echo "开始解压"
   unzip -d sugarcrm sugarcrm.zip &> /dev/null || exit 1
   [ -d "${WEB_DIR}"/"${install_name}" ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf "${WEB_DIR}"/"${install_name}"
@@ -471,7 +471,12 @@ while [ "$1" != '' ]; do
       install_meth="URL"
       shift
       get_db_name
-      #man_url=${1:?"必须指定下载路径"} && download_url="${download_url}/${1}" && shift
+      if test -n "${1}"; then
+          download_url="${download_url}/${1}" && shift
+      else
+          cus_echo "请输入下载地址"
+          exit 1
+      fi
       down_file=${1:?"必须指定下载文件名"} && download_url="${download_url}/${1}"  && shift
       down_file=${down_file%\.*}
       gen_install_name url "${down_file}" 0
