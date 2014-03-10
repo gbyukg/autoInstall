@@ -305,79 +305,79 @@ init_db()
 data_config()
 {
     cat <<CONFIG > config.php
-    <?php
+<?php
 
-    \$config = array(
+\$config = array(
 
-        // DB settings
-        'db' => array(
-            'type' => 'db2', // mysql or db2
-            'host' => '127.0.0.1',
-            'port' => '${DB_PORT}',
-            'username' => '${DB_USER}',
-            'password' => '${DB_PWD}',
-            'name' => '${db_name}',
-        ),
+    // DB settings
+    'db' => array(
+        'type' => 'db2', // mysql or db2
+        'host' => '127.0.0.1',
+        'port' => '${DB_PORT}',
+        'username' => '${DB_USER}',
+        'password' => '${DB_PWD}',
+        'name' => '${db_name}',
+    ),
 
-        // default bean field/values used by Utils_Db::createInsert()
-        'bean_fields' => array(
-            'created_by' => '1',
-            'date_entered' => '2012-01-01 00:00:00',
-            'modified_user_id' => '1',
-            'date_modified' => '2012-01-01 00:00:00',
-        ),
+    // default bean field/values used by Utils_Db::createInsert()
+    'bean_fields' => array(
+        'created_by' => '1',
+        'date_entered' => '2012-01-01 00:00:00',
+        'modified_user_id' => '1',
+        'date_modified' => '2012-01-01 00:00:00',
+    ),
 
-        // sugarcrm
-        'sugarcrm' => array(
-            // full path of the installed sugarcrm instance
-            'directory' => '${WEB_DIR}/${install_name}',
-        ),
+    // sugarcrm
+    'sugarcrm' => array(
+        // full path of the installed sugarcrm instance
+        'directory' => '${WEB_DIR}/${install_name}',
+    ),
 
-    );
+);
 CONFIG
 }
 
 add_ignore()
 {
     cat <<IGNORE > .gitignore
-    .gitignore
-    *.sql
-    *.log
-    .*
-    cache
-    create_tag.sh
-    repair.sh
-    tags
-    sidecar/minified
-    *.patch
+.gitignore
+*.sql
+*.log
+.*
+cache
+create_tag.sh
+repair.sh
+tags
+sidecar/minified
+*.patch
 IGNORE
 }
 
 add_project()
 {
     cat <<PROJECT > .project
-    <?xml version="1.0" encoding="UTF-8"?>
-        <projectDescription>
-        <name>${install_name}</name>
-        <comment></comment>
-        <projects>
-        </projects>
-        <buildSpec>
-            <buildCommand>
-                <name>org.eclipse.wst.validation.validationbuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-            <buildCommand>
-                <name>org.eclipse.dltk.core.scriptbuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-        </buildSpec>
-        <natures>
-            <nature>org.eclipse.php.core.PHPNature</nature>
-        </natures>
-        </projectDescription>
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+<name>${install_name}</name>
+<comment></comment>
+<projects>
+</projects>
+<buildSpec>
+    <buildCommand>
+        <name>org.eclipse.wst.validation.validationbuilder</name>
+        <arguments>
+        </arguments>
+    </buildCommand>
+    <buildCommand>
+        <name>org.eclipse.dltk.core.scriptbuilder</name>
+        <arguments>
+        </arguments>
+    </buildCommand>
+</buildSpec>
+<natures>
+    <nature>org.eclipse.php.core.PHPNature</nature>
+</natures>
+</projectDescription>
 PROJECT
 }
 
@@ -422,21 +422,21 @@ data_loader()
 create_tag()
 {
     cat << CREATETAG > create_tag.sh
-    exec ctags-exuberant -f tags \\
-    -h ".php" -R \\
-    --exclude="\.git" \\
-    --exclude="cache" \\
-    --exclude="include/javascript" \\
-    --exclude="tests" \\
-    --exclude="custom/include/javascript" \\
-    --exclude="sidecar" \\
-    --exclude="styleguide" \\
-    --totals=yes \\
-    --tag-relative=yes \\
-    --PHP-kinds=+cf \\
-    --regex-PHP='/abstract class ([^ ]*)/\1/c/' \\
-    --regex-PHP='/interface ([^ ]*)/\1/c/' \\
-    --regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'
+exec ctags-exuberant -f tags \\
+-h ".php" -R \\
+--exclude="\.git" \\
+--exclude="cache" \\
+--exclude="include/javascript" \\
+--exclude="tests" \\
+--exclude="custom/include/javascript" \\
+--exclude="sidecar" \\
+--exclude="styleguide" \\
+--totals=yes \\
+--tag-relative=yes \\
+--PHP-kinds=+cf \\
+--regex-PHP='/abstract class ([^ ]*)/\1/c/' \\
+--regex-PHP='/interface ([^ ]*)/\1/c/' \\
+--regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'
 CREATETAG
 
     chmod 755 create_tag.sh
@@ -481,7 +481,7 @@ cd "${SCRIPT_DIR}"
 rm -rf \*.html cookies.cook
 
 cus_echo "安装完成"
-(type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.phpi) || 
+(type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) || 
 {
     (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) || 
     {

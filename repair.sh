@@ -10,3 +10,5 @@ rm -rf Relationships/relationships.cache.php
 rm -rf api/metadata/metadata_base_private.php
 rm -rf api/metadata/metadata_base_public.php
 rm -rf modules/ibm_Roadmaps/clients/base/*.php
+rm -rf modules/ibm_Cadences/clients/base/*.php
+#rm -rf Expressions/*.js
