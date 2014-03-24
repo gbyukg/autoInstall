@@ -300,6 +300,7 @@ init_db()
     [[ ! $? == 0  ]] && echo "系统需要安装expect支持，使用 : sudo apt-get install expect expect-dev 进行安装" && echo "" && exit 1
     cus_echo "初始化数据库 : ${db_name} "
     expect "${SCRIPT_DIR}"/initdb.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+    expect "${SCRIPT_DIR}"/createDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 }
 
 data_config()
