@@ -451,6 +451,10 @@ after_install()
     # 导入avl
     [ "X1" == "X${import_avl}" ] && time load_avl
 
+    # 创建CGTT_SEED_ID表
+    cus_echo "创建缺省数据库"
+    expect "${SCRIPT_DIR}"/creatDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+
     cd "${WEB_DIR}/${install_name}"
 
     cp "${SCRIPT_DIR}"/ChromePhp.php include/ChromePhp.php
