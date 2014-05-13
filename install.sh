@@ -14,7 +14,8 @@ readonly DB_HOST="localhost"
 readonly DB_PORT="50000"
 
 site_url="http://localhost/"
-ver="6.4.0"
+#ver="6.4.0"
+ver="7.1.5"
 db_name=""
 mas_remote="upstream"
 fet_remote="origin"
@@ -106,13 +107,15 @@ pre_git()
     git fetch ${mas_remote} &&
     cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" &&
     git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} &&
+    if [[ "${ver}" == "7.1.5" ]]; then
     cus_echo "submodule update" &&
-    git submodule update --init && {
-    [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
-        {
-            cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
+        git submodule update --init && {
+        [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
+            {
+                cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
+            }
         }
-    }
+    fi
     # end
     err_hand "创建分支失败"
 
@@ -125,7 +128,6 @@ pre_git()
     rm -rf "${BUILD_DIR}"/*
     php build.php -clean -cleanCache -flav=ult -ver="${ver}" -dir=sugarcrm -build_dir="${BUILD_DIR}" &&
     cp -r "${BUILD_DIR}"/ult/sugarcrm "${WEB_DIR}"/"${install_name}"
-    #  [ ${ver} == "7.1.5" ] && rm -rf ${WEB_DIR}/${install_name}/sidecar && cp -r ${SCRIPT_DIR}/sidecar ${SCRIPT_DIR}/styleguide ${WEB_DIR}/${install_name}
 }
 
 load_avl()
@@ -172,7 +174,7 @@ install()
     cd "${SCRIPT_DIR}"
 
     cus_echo "安装初始化"
-    curl -o install.html -D cookies.cook http://localhost/"${install_name}"/install.php >/dev/null 2>&1
+    curl -o install.html -D cookies.cook "${site_url}"/install.php >/dev/null 2>&1
     sleep 3
 
     curl -o install.html -b cookies.cook -d "\
@@ -186,14 +188,6 @@ language=en_us\
     curl -o install.html -b cookies.cook -d "\
 current_step=1\
 &goto=Next" \
-    "${site_url}"/install.php >&/dev/null 2>&1
-    sleep 3
-
-    cus_echo "第一.二步"
-    curl -o install.html -b cookies.cook -d "\
-checkInstallSystem=true\
-&to_pdf=1\
-&sugar_body_only=1" \
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
 
@@ -222,32 +216,38 @@ setup_db_type=ibm_db2\
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
 
-    cus_echo "check database"
+    cus_echo "check db"
     curl -o install.html -b cookies.cook -d "\
 checkDBSettings=true\
-&to_pdf=1&sugar_body_only=1\
+&to_pdf=1\
+&sugar_body_only=1\
 &setup_db_database_name=${db_name}\
 &setup_db_port_num=${DB_PORT}\
 &setup_db_host_name=${DB_HOST}\
 &setup_db_admin_user_name=${DB_USER}\
 &setup_db_admin_password=${DB_PWD}\
+&fts_type=Elastic\
+&fts_host=localhost\
+&fts_port=9200\
 &demoData=no" \
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
 
     cus_echo "第五步"
     curl -o install.html -b cookies.cook -d "\
-checkDBSettings=true\
-&setup_db_drop_tables=false\
+setup_db_drop_tables=\
 &goto=Next\
 &setup_db_database_name=${db_name}\
 &setup_db_host_name=${DB_HOST}\
-&setup_db_prot_num=\
+&setup_db_port_num=${DB_PORT}\
 &setup_db_create_sugarsales_user=\
 &setup_db_admin_user_name=${DB_USER}\
 &setup_db_admin_password_entry=${DB_PWD}\
 &setup_db_admin_password=${DB_PWD}\
 &demoData=no\
+&fts_type=Elastic\
+&fts_host=localhost\
+&fts_port=9200\
 &current_step=5" \
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
@@ -393,30 +393,12 @@ data_loader()
         cd "${SCRIPT_DIR}"/sugarcrm/ibm/dataloaders
     fi
 
-    #[[ "XGIT" == "X${install_meth}" ]] &&
-        #{
-    #cd "${GIT_DIR}"/ibm/dataloaders
-    #cp -r "${GIT_DIR}"/sugarcrm/tests "${WEB_DIR}"/"${install_name}"
-    #chmod 755 "${WEB_DIR}"/"${install_name}"/tests/phpunit.php "${WEB_DIR}"/"${install_name}"/tests/phpunit2.php
-    #} ||
-        #{
-    #cd "${SCRIPT_DIR}"/sugarcrm/ibm/dataloaders
-    #}
-
     data_config
-    pwd
     php populate_SmallDataset.php
     [ X"GIT" == X"${install_meth}" ] && cd "${GIT_DIR}" && git checkout ibm/dataloaders/config.php
 
-
-    #cd ${WEB_DIR}/${install_name}/custom/cli
-    #php -f cli.php task=RebuildClientHierarchy && php -f cli.php task=UpdateUsersTopTierNode
-
     cd "${WEB_DIR}"/"${install_name}"/batch_sugar/RTC_19211
     php -f rtc_19211_main.php RTC_19211>&/dev/null 2>&1
-
-    #[ ${ver} == "7.1.5" ] && cp ${SCRIPT_DIR}/demodata_for_db2_v4.php ${WEB_DIR}/${install_name}/demodata_for_db2_v4.php && cd ${WEB_DIR} && php demodata_for_db2_v4.php
-
 }
 
 create_tag()
@@ -449,14 +431,14 @@ after_install()
     time data_loader
 
     # fix db
-    expect "${SCRIPT_DIR}"/createDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+    #expect "${SCRIPT_DIR}"/createDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 
     # 导入avl
     [ "X1" == "X${import_avl}" ] && time load_avl
 
     # 创建CGTT_SEED_ID表
-    cus_echo "创建缺省数据库"
-    expect "${SCRIPT_DIR}"/creatDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+    #cus_echo "创建缺省数据库"
+    #expect "${SCRIPT_DIR}"/creatDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 
     cd "${WEB_DIR}/${install_name}"
 
