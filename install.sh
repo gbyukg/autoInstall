@@ -103,7 +103,7 @@ pre_git()
     }
 
     # begain
-    cus_echo "fetch远程代码 : ${mas_remote}" &&
+    cus_echo "fetch遠程分支代碼: ${mas_remote}" &&
     git fetch ${mas_remote} &&
     cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" &&
     git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} &&
@@ -112,7 +112,8 @@ pre_git()
         git submodule update --init && {
         [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
             {
-                cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
+                #cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
+                cus_echo "合併遠程分支 分支:${fet_remote}" && git merge --ff-only --stat -v ${fet_remote}/${fet_branch}
             }
         }
     fi
