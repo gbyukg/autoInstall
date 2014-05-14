@@ -86,6 +86,11 @@ get_pull()
     exit 0;
 }
 
+create_pull_request()
+{
+    curl 
+}
+
 pre_git()
 {
     echo ""
