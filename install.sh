@@ -86,6 +86,26 @@ get_pull()
     exit 0;
 }
 
+create_pull_request()
+{
+    local title=${1}
+    local head=${2}
+    local base=${3}
+    local body=${4}
+
+    cus_echo "\"${title}\" : ${2} -> ${3} \"${4}\""
+
+    cd "${SCRIPT_DIR}"
+    source "${HOME}/.ssh/token"
+
+    #cur https://api.github.com/repos/sugareps/Mango/pulls \
+
+    curl https://api.github.com/repos/gbyukg/autoInstall/pulls \
+        -d '{"title":"'"${title}"'", "head":"'"${head}"'","base":"'"${base}"'","body":"'"${body}"'"}' \
+        -H "Authorization: token ${token}" \
+        -H "Content-Type: application/json"
+}
+
 pre_git()
 {
     echo ""
@@ -561,6 +581,15 @@ while [ "$1" != '' ]; do
         --avl )
             shift
             import_avl="1";
+            ;;
+        -p )
+set -x
+            head=${2:?請輸入被合併的分支號}
+            base=${3:?請輸入要合併進的分支號}
+            title=${4:?請輸入標題}
+            body=${5:?請輸入command}
+            create_pull_request "${title}" "${head}" "${base}" "${body}"
+            exit
             ;;
         * )
             shift
