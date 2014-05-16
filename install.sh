@@ -131,7 +131,7 @@ pre_git()
         [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
             {
                 #cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
-                cus_echo "合併遠程分支 分支:${fet_remote}" && git merge --ff-only --stat -v ${fet_remote}/${fet_branch}
+                cus_echo "合併遠程分支 分支:${fet_remote}" && git merge --no-commit --no-edit --progress --stat -v ${fet_remote}/${fet_branch}
             }
         }
     fi
@@ -460,6 +460,7 @@ after_install()
     #expect "${SCRIPT_DIR}"/creatDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 
     cd "${WEB_DIR}/${install_name}"
+    touch sql.sql
 
     cp "${SCRIPT_DIR}"/ChromePhp.php include/ChromePhp.php
     echo "require_once 'ChromePhp.php';" >> include/utils.php
