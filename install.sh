@@ -88,6 +88,7 @@ get_pull()
 
 create_pull_request()
 {
+    set -x
     local title=${1}
     local head=${2}
     local base=${3}
@@ -99,7 +100,7 @@ create_pull_request()
     source "${HOME}/.ssh/token"
 
     curl https://api.github.com/repos/sugareps/Mango/pulls \
-        -d '{"title":"'"${title}"'", "head":"'"${head}"'","base":"'"${base}"'","body":"'"${body}"'"}' \
+        -d '{"title":"'"${title}"'", "head":"'"gbyukg:${head}"'","base":"'"${base}"'","body":"'"${body}"'"}' \
         -H "Authorization: token ${token}" \
         -H "Content-Type: application/json"
 }
