@@ -88,7 +88,6 @@ get_pull()
 
 create_pull_request()
 {
-    set -x
     local title=${1}
     local head=${2}
     local base=${3}
