@@ -122,7 +122,6 @@ pre_git()
 
     # begain
     cus_echo "fetch遠程分支代碼: ${mas_remote}" &&
-    #git fetch ${mas_remote} &&
     cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" &&
     git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} &&
     if [[ "${ver}" == "7.1.5" ]]; then
@@ -130,7 +129,7 @@ pre_git()
         git submodule update --init && {
         [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
             {
-                cus_echo "合并远程分支分支:${fet_remote}" && git pull --no-edit --stat --summary ${fet_remote} ${fet_branch}
+                cus_echo "合并远程分支分支:${fet_remote}" && git pull -v --no-edit --stat --summary ${fet_remote} ${fet_branch}
                 #cus_echo "合併遠程分支 分支:${fet_remote}" && git merge --no-commit --no-edit --progress --stat -v ${fet_remote}/${fet_branch}
             }
         }
@@ -407,7 +406,7 @@ data_loader()
     if [[ "XGIT" == "X${install_meth}" ]]; then
         cd "${GIT_DIR}"/ibm/dataloaders
         cp -r "${GIT_DIR}"/sugarcrm/tests "${WEB_DIR}"/"${install_name}"
-        chmod 755 "${WEB_DIR}"/"${install_name}"/tests/phpunit.php "${WEB_DIR}"/"${install_name}"/tests/phpunit2.php
+        #chmod 755 "${WEB_DIR}"/"${install_name}"/tests/phpunit.php "${WEB_DIR}"/"${install_name}"/tests/phpunit2.php
     else
         cd "${SCRIPT_DIR}"/sugarcrm/ibm/dataloaders
     fi
@@ -475,28 +474,28 @@ after_install()
     [ 0 == $? ] && {
     cus_echo "生成tags"
     create_tag
-}
-cp "${SCRIPT_DIR}"/repair.sh "${WEB_DIR}"/"${install_name}"/repair.sh
-
-cus_echo "初始化GIT库"
-git init
-{
-    git add . && git commit -m 'init'
-}>&/dev/null
-
-cd "${SCRIPT_DIR}"
-
-# 删除安装文件信息
-rm -rf \*.html cookies.cook
-
-cus_echo "安装完成"
-(type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) || 
-{
-    (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) || 
-    {
-        firefox http://localhost/"${install_name}"/index.php
     }
-}
+    cp "${SCRIPT_DIR}"/repair.sh "${WEB_DIR}"/"${install_name}"/repair.sh
+
+    cus_echo "初始化GIT库"
+    git init
+    {
+        git add . && git commit -m 'init'
+    }>&/dev/null
+
+    cd "${SCRIPT_DIR}"
+
+    # 删除安装文件信息
+    rm -rf \*.html cookies.cook
+
+    cus_echo "安装完成"
+    (type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) || 
+    {
+        (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) || 
+        {
+            firefox http://localhost/"${install_name}"/index.php
+        }
+    }
 }
 
 install_check()
