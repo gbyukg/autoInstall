@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
+sysname=$(uname)
+
 readonly WEB_DIR="/document/gbyukg/www/sugar"
-readonly GIT_DIR="/document/gbyukg/www/mango"
+readonly GIT_DIR="/document/gbyukg/www/Mango"
 readonly BUILD_DIR="/document/gbyukg/www/sugar/build_path"
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly INITDB_PATH="./"
 readonly KEY="internal sugar user 20100224"
 readonly SITE_USER="admin"
 readonly SITE_PWD="admin"
-readonly DB_USER="db2inst1"
+readonly DB_USER="gbyukg"
 readonly DB_PWD="admin"
 readonly DB_HOST="localhost"
 readonly DB_PORT="50000"
@@ -121,7 +123,7 @@ pre_git()
     }
 
     # begain
-    cus_echo "fetch遠程分支代碼: ${mas_remote}" &&
+    cus_echo "fetch遠程分支代碼: ${mas_remote}" && git fetch "${mas_remote}" &&
     cus_echo "创建新分支 : ${install_name}(基于远程分支${mas_remote}/${mas_branch})" &&
     git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} &&
     if [[ "${ver}" == "7.1.5" ]]; then
@@ -314,10 +316,15 @@ current_step=10\
 
 init_db()
 {
-    type expect>&/dev/null 2>&1
-    [[ ! $? == 0  ]] && echo "系统需要安装expect支持，使用 : sudo apt-get install expect expect-dev 进行安装" && echo "" && exit 1
-    cus_echo "初始化数据库 : ${db_name} "
-    expect "${SCRIPT_DIR}"/initdb.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+    if [[ "X${sysname}" == "XDarwin" ]];then
+        cus_echo "初始化数据库 : ${db_name} "
+        bash $HOME/init4sugar.sh ${db_name}
+    else
+        type expect>&/dev/null 2>&1
+        [[ ! $? == 0  ]] && echo "系统需要安装expect支持，使用 : sudo apt-get install expect expect-dev 进行安装" && echo "" && exit 1
+        cus_echo "初始化数据库 : ${db_name} "
+        expect "${SCRIPT_DIR}"/initdb.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+    fi
 }
 
 data_config()
@@ -422,7 +429,7 @@ data_loader()
 create_tag()
 {
     cat << CREATETAG > create_tag.sh
-exec ctags-exuberant -f tags \\
+exec ctags -f tags \\
 -h ".php" -R \\
 --exclude="\.git" \\
 --exclude="cache" \\
@@ -489,13 +496,17 @@ after_install()
     rm -rf \*.html cookies.cook
 
     cus_echo "安装完成"
-    (type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) || 
-    {
-        (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) || 
+    if [[ "X${sysname}" == "XDarwin" ]];then
+        open /Applications/Google\ Chrome.app http://127.0.0.1/"${install_name}/index.php"
+    else
+        (type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) ||
         {
-            firefox http://localhost/"${install_name}"/index.php
+            (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) ||
+            {
+                firefox http://localhost/"${install_name}"/index.php
+            }
         }
-    }
+    fi
 }
 
 install_check()
