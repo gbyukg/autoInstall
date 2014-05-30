@@ -10,6 +10,11 @@ readonly INITDB_PATH="./"
 readonly KEY="internal sugar user 20100224"
 readonly SITE_USER="admin"
 readonly SITE_PWD="admin"
+
+[[ "X${sysname}" == "XDarwin" ]] &&
+    readonly DB_USER="gbyukg" ||
+    readonly DB_USER="db2inst1"
+
 readonly DB_USER="gbyukg"
 readonly DB_PWD="admin"
 readonly DB_HOST="localhost"
@@ -34,8 +39,8 @@ star="********************"
 err_hand()
 {
     [[ X"$?" == X"0" ]] || {
-    echo "${1}, 查看日志文件" && exit 1
-}
+        echo "${1}, 查看日志文件" && exit 1
+    }
 }
 
 cus_echo()
@@ -499,9 +504,9 @@ after_install()
     if [[ "X${sysname}" == "XDarwin" ]];then
         open /Applications/Google\ Chrome.app http://127.0.0.1/"${install_name}/index.php"
     else
-        (type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) ||
+        (type google-chrome > /dev/null 2>&1 && google-chrome http://localhost/"${install_name}"/index.php) || 
         {
-            (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) ||
+            (type chromium-browser > /dev/null 2>&1 && chromium-browser google-chrome http://localhost/"${install_name}"/index.php) || 
             {
                 firefox http://localhost/"${install_name}"/index.php
             }
