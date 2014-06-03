@@ -7,7 +7,7 @@ readonly GIT_DIR="/document/gbyukg/www/Mango"
 readonly BUILD_DIR="/document/gbyukg/www/sugar/build_path"
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly INITDB_PATH="./"
-readonly KEY="internal sugar user 20100224"
+readonly KEY="XXX"
 readonly SITE_USER="admin"
 readonly SITE_PWD="admin"
 
