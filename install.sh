@@ -7,9 +7,9 @@ readonly GIT_DIR="/document/gbyukg/www/Mango"
 readonly BUILD_DIR="/document/gbyukg/www/sugar/build_path"
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly INITDB_PATH="./"
-readonly KEY="5f41c8f0ed136c4ced2de01622f942f3"
 readonly SITE_USER="admin"
 readonly SITE_PWD="admin"
+. "${HOME}/.ssh/key"
 
 [[ "X${sysname}" == "XDarwin" ]] &&
     readonly DB_USER="gbyukg" ||
