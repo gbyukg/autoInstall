@@ -15,7 +15,6 @@ readonly SITE_PWD="admin"
     readonly DB_USER="gbyukg" ||
     readonly DB_USER="db2inst1"
 
-readonly DB_USER="gbyukg"
 readonly DB_PWD="admin"
 readonly DB_HOST="localhost"
 readonly DB_PORT="50000"
