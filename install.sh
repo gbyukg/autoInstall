@@ -145,8 +145,8 @@ pre_git()
 
     cus_echo "构建代码 -> ${BUILD_DIR}"
     {
-        rm -rf "${BUILD_DIR}"/*
-        rm -rf "${WEB_DIR}"/"${install_name}"
+        cus_echo " 删除构建文件${BUILD_DIR} " && rm -rf "${BUILD_DIR}"/*
+        cus_echo " 删除原文件${install_name} " && rm -rf "${WEB_DIR}"/"${install_name}"
     }>/dev/null 2>&1
     cd "${GIT_DIR}"/build/rome
     rm -rf "${BUILD_DIR}"/*
