@@ -29,7 +29,7 @@ mas_branch=""
 fet_branch=""
 install_meth=""
 install_name=""
-download_url="http://sugjnk01.rtp.raleigh.ibm.com"
+download_url="http://sc2.gnuhub.com/sugarsync/ibm_r20"
 #man_url=""
 down_file=""
 import_avl="0"
@@ -183,7 +183,8 @@ pre_url()
     cus_echo "开始解压"
     unzip -d sugarcrm sugarcrm.zip &> /dev/null || exit 1
     [ -d "${WEB_DIR}"/"${install_name}" ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf "${WEB_DIR}"/"${install_name}"
-    cp -r sugarcrm/SugarUlt-Full-6.7.0 "${WEB_DIR}"/"${install_name}"
+    local sugar_dir_name=$(ls -d sugarcrm/SugarUlt-Full-*)
+    cp -r "${sugar_dir_name}" "${WEB_DIR}/${install_name}"
     rm -rf sugarcrm.zip
 }
 
@@ -568,13 +569,14 @@ while [ "$1" != '' ]; do
             install_meth="URL"
             shift
             get_db_name
+            down_file="${1}"
             if test -n "${1}"; then
-                download_url="${download_url}/${1}" && shift
+                download_url="${download_url}/${1}"
+                shift
             else
                 cus_echo "请输入下载地址"
                 exit 1
             fi
-            down_file=${1:?"必须指定下载文件名"} && download_url="${download_url}/${1}"  && shift
             down_file=${down_file%\.*}
             gen_install_name url "${down_file}" 0
             ;;
