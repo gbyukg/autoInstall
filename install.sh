@@ -540,6 +540,7 @@ while [ "$1" != '' ]; do
             echo '--debug'
             echo '-v 7 用于安装7.0版本'
             echo '-r 补丁号 sugarcrm的安装路径'
+            echo '-p ibmd_XXX ibm_r20 title command 创建pull request'
             exit 0
             ;;
         --mas-remote )
