@@ -122,7 +122,7 @@ pre_git()
     {
         git show-branch "${install_branch_name}">/dev/null &&
         {
-            git checkout ibm_current && cus_echo "删除已有分支 : ${install_branch_name}" && git branch -D "${install_branch_name}"
+            git checkout ibm_r20 && cus_echo "删除已有分支 : ${install_branch_name}" && git branch -D "${install_branch_name}"
         } 2>>"${SCRIPT_DIR}"/install.log && err_hand "错了！！！！！！！！！！"
     }
 
