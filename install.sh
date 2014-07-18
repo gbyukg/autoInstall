@@ -455,6 +455,55 @@ CREATETAG
     ./create_tag.sh
 }
 
+restApi_config()
+{
+    cat <<CONFIG> config.php
+<?php
+
+\$config = array(
+
+    // SugarCRM settings
+    'sugar_user' => '${SITE_USER}',
+    'sugar_password' => '${SITE_PWD}',
+    'sugar_encryption' => '', // set to PLAIN or 3DES for LDAP auth
+    'sugar_encryption_key' => '', // LDAP encryption key for 3DES
+    'sugar_url' => '${site_url}',
+    'sugar_api' => 'v4_ibm',
+    
+    // String to identify this application
+    'sugar_api_app' => 'API Testing',
+    
+    // Specify the API mode: soap, wsdl or rest
+    'api_mode' => 'soap',
+    
+    // WSDL specific
+    'wsdl_use_cache' => false,
+    
+    // DB settings (
+    'db_type' => 'db2', // mysql or db2
+    'db_host' => '${DB_HOST}',
+    'db_port' => '${DB_PORT}',
+    'db_username' => '${DB_USER}',
+    'db_password' => '${DB_PWD}',
+    'db_name' => '${db_name}',
+    
+    // Zend Studio debug settings
+    'zend_debug' => false,
+    'zend_debug_host' => 'celeborn.sugar',
+    'zend_debug_port' => '10137',
+    
+    // XDebug settings
+    'xdebug' => false,
+    'xdebug_idekey' => 'phpstorm',
+    
+    // runtime config overrides
+    'php_ini' => array(
+        'default_socket_timeout' => 1200,
+    ),
+);
+CONFIG
+}
+
 after_install()
 {
     # data loader
@@ -462,6 +511,13 @@ after_install()
 
     # fix db
     #expect "${SCRIPT_DIR}"/createDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
+
+    # setup rest api
+    # php run.php -j IbmRevenueLineItems_15119aTest
+    rm -rf "${WEB_DIR}/${install_name}/ibm/api2"
+    cp -r "${GIT_DIR}/ibm/api2" "${WEB_DIR}/${install_name}/ibm/"
+    cd "${WEB_DIR}/${install_name}/ibm/api2"
+    restApi_config
 
     # 导入avl
     [ "X1" == "X${import_avl}" ] && time load_avl
