@@ -519,6 +519,13 @@ after_install()
     cd "${WEB_DIR}/${install_name}/ibm/api2"
     restApi_config
 
+    echo "\$sugar_config['connections_base_url'] ='https://devconnections2.rtp.raleigh.ibm.com';
+        \$sugar_config['connections_http_base_url'] = 'https://devconnections2.rtp.raleigh.ibm.com';
+        \$sugar_config['ieb_connections_base_url'] = 'http://ebs01.raleigh.ibm.com:3470';
+        \$sugar_config['functional_id'] = 'helenbyrne10@tst.ibm.com';
+        \$sugar_config['connections_common_path'] = '/common';
+        \$sugar_config['enable_collab'] = true;" >> config_override.php
+
     # 导入avl
     [ "X1" == "X${import_avl}" ] && time load_avl
 
@@ -529,6 +536,7 @@ after_install()
     cd "${WEB_DIR}/${install_name}"
     touch sql.sql
 
+    cp -r "${SCRIPT_DIR}"/xhprof_lib ./
     cp "${SCRIPT_DIR}"/ChromePhp.php include/ChromePhp.php
     echo "require_once 'ChromePhp.php';" >> include/utils.php
 
