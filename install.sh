@@ -29,7 +29,7 @@ mas_branch=""
 fet_branch=""
 install_meth=""
 install_name=""
-download_url="http://sc2.gnuhub.com/sugarsync/ibm_r20"
+download_url="http://sc2.gnuhub.com/sugarsync/"
 #man_url=""
 down_file=""
 import_avl="0"
@@ -184,7 +184,8 @@ pre_url()
     unzip -d sugarcrm sugarcrm.zip &> /dev/null || exit 1
     [ -d "${WEB_DIR}"/"${install_name}" ] && cus_echo "删除原有文件${WEB_DIR}/${install_name}" && rm -rf "${WEB_DIR}"/"${install_name}"
     local sugar_dir_name=$(ls -d sugarcrm/SugarUlt-Full-*)
-    cp -r "${sugar_dir_name}" "${WEB_DIR}/${install_name}"
+    echo ${install_name}
+    mv "${sugar_dir_name}" "${WEB_DIR}/${install_name}"
     rm -rf sugarcrm.zip
 }
 
@@ -642,6 +643,7 @@ while [ "$1" != '' ]; do
                 exit 1
             fi
             down_file=${down_file%\.*}
+            down_file=${down_file##*/}
             gen_install_name url "${down_file}" 0
             ;;
         -r )
