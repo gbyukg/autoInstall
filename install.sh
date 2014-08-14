@@ -375,6 +375,7 @@ add_ignore()
 *.sql
 *.log
 .*
+notes
 cache
 create_tag.sh
 repair.sh
@@ -494,8 +495,8 @@ restApi_config()
     'zend_debug_port' => '10137',
     
     // XDebug settings
-    'xdebug' => false,
-    'xdebug_idekey' => 'phpstorm',
+    'xdebug' => true,
+    'xdebug_idekey' => 'ECLIPSE_DBGP',
     
     // runtime config overrides
     'php_ini' => array(
@@ -520,13 +521,6 @@ after_install()
     cd "${WEB_DIR}/${install_name}/ibm/api2"
     restApi_config
 
-    echo "\$sugar_config['connections_base_url'] ='https://devconnections2.rtp.raleigh.ibm.com';
-        \$sugar_config['connections_http_base_url'] = 'https://devconnections2.rtp.raleigh.ibm.com';
-        \$sugar_config['ieb_connections_base_url'] = 'http://ebs01.raleigh.ibm.com:3470';
-        \$sugar_config['functional_id'] = 'helenbyrne10@tst.ibm.com';
-        \$sugar_config['connections_common_path'] = '/common';
-        \$sugar_config['enable_collab'] = true;" >> config_override.php
-
     # 导入avl
     [ "X1" == "X${import_avl}" ] && time load_avl
 
@@ -535,7 +529,15 @@ after_install()
     #expect "${SCRIPT_DIR}"/creatDB.exp "${DB_USER}" "${DB_PWD}" "${db_name}" "${INITDB_PATH}"
 
     cd "${WEB_DIR}/${install_name}"
+    #echo "\$sugar_config['connections_base_url'] ='https://devconnections2.rtp.raleigh.ibm.com';
+        #\$sugar_config['connections_http_base_url'] = 'https://devconnections2.rtp.raleigh.ibm.com';
+        #\$sugar_config['ieb_connections_base_url'] = 'http://ebs01.raleigh.ibm.com:3470';
+        #\$sugar_config['functional_id'] = 'helenbyrne10@tst.ibm.com';
+        #\$sugar_config['connections_common_path'] = '/common';
+        #\$sugar_config['enable_collab'] = true;" >> config_override.php
+
     touch sql.sql
+    touch notes
 
     cp -r "${SCRIPT_DIR}"/xhprof_lib ./
     cp "${SCRIPT_DIR}"/ChromePhp.php include/ChromePhp.php
