@@ -602,7 +602,7 @@ while [ "$1" != '' ]; do
             echo "help"
             echo '-g/--git git check主分支 自己分支'
             echo '-u/--url url 包名'
-            echo '--db_name dbName git:默认gitsugar; url默认urlsugar'
+            echo '-d dbName git:默认gitsugar; url默认urlsugar'
             echo '--mas-remote upstream'
             echo '--fet-remote origin'
             echo '--debug'
