@@ -556,6 +556,11 @@ after_install()
     }
     cp "${SCRIPT_DIR}"/repair.sh "${WEB_DIR}"/"${install_name}"/repair.sh
 
+    cus_echo "导入products产品线"
+    db2 connect to ${db_name}
+    db2 'delete from ibm_products'
+    db2 'import from ${SCRIPT_DIR}/prod.csv of del insert_update into ibm_products'
+
     cus_echo "初始化GIT库"
     git init
     {
