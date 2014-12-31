@@ -132,7 +132,7 @@ pre_git()
     git checkout -b "install_${install_name}" ${mas_remote}/${mas_branch} &&
     if [[ "${ver}" == "7.1.5" ]]; then
     cus_echo "submodule update" &&
-        git submodule update --init && {
+        git submodule update --recursive && {
         [[ -z ${fet_branch} || "X0" == "X${fet_branch}" ]] ||
             {
                 cus_echo "合并远程分支分支:${fet_remote}" && git pull -v --no-edit --stat --summary ${fet_remote} ${fet_branch}
@@ -151,7 +151,9 @@ pre_git()
     cd "${GIT_DIR}"/build/rome
     rm -rf "${BUILD_DIR}"/*
     php build.php -clean -cleanCache -flav=ult -ver="${ver}" -dir=sugarcrm -build_dir="${BUILD_DIR}" &&
-    cp -r "${BUILD_DIR}"/ult/sugarcrm "${WEB_DIR}"/"${install_name}"
+    cp -R "${BUILD_DIR}"/ult/sugarcrm "${WEB_DIR}"/"${install_name}"
+    #cp -R "${SCRIPT_DIR}/sugar/autoloader.php" "${WEB_DIR}"/"${install_name}/include/utils/"
+    #cp -R "${SCRIPT_DIR}/sugar/Elastica" "${WEB_DIR}"/"${install_name}/vendor/"
 }
 
 load_avl()
@@ -556,10 +558,10 @@ after_install()
     }
     cp "${SCRIPT_DIR}"/repair.sh "${WEB_DIR}"/"${install_name}"/repair.sh
 
-    cus_echo "导入products产品线"
-    db2 connect to ${db_name}
-    db2 'delete from ibm_products'
-    db2 'import from ${SCRIPT_DIR}/prod.csv of del insert_update into ibm_products'
+    #cus_echo "导入products产品线"
+    #db2 connect to ${db_name}
+    #db2 'delete from ibm_products'
+    #echo "db2 'import from ${SCRIPT_DIR}/prod.csv of del insert_update into ibm_products'"
 
     cus_echo "初始化GIT库"
     git init
