@@ -208,6 +208,7 @@ install()
     curl -o install.html -b cookies.cook -d "\
 language=en_us\
 &current_step=0\
+instance_url="${sit_url}"/install.php\
 &goto=Next" \
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
@@ -216,6 +217,14 @@ language=en_us\
     curl -o install.html -b cookies.cook -d "\
 current_step=1\
 &goto=Next" \
+    "${site_url}"/install.php >&/dev/null 2>&1
+    sleep 3
+
+    cus_echo "check system"
+    curl -o install.html -b cookies.cook -d "\
+checkInstallSystem=true\
+&to_pdf=1\
+&sugar_body_only=1" \
     "${site_url}"/install.php >&/dev/null 2>&1
     sleep 3
 
@@ -283,6 +292,7 @@ setup_db_drop_tables=\
     cus_echo "第六步"
     curl -o install.html -b cookies.cook -d "\
 current_step=6\
+&goto=Next\
 &goto=Next&setup_site_url=${site_url}\
 &setup_system_name=SugarCRM\
 &setup_site_admin_user_name=${SITE_USER}\
@@ -296,6 +306,7 @@ current_step=6\
 current_step=7\
 &goto=Next\
 &setup_site_sugarbeet_anonymous_stats=yes\
+&setup_site_sugarbeet_automatic_checks=yes\
 &setup_site_session_path=\
 &setup_site_log_dir=\
 &setup_site_guid=" \
